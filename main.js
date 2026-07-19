@@ -26,6 +26,7 @@ let gameOver = false
 let roundReady = false
 let selectedStarter = ""
 
+// PokeAPI failures should leave the page recoverable instead of blocking a new game.
 function loadPokemon(id, image, sprite = "front_default") {
   fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
     .then((response) => response.json())
@@ -55,6 +56,7 @@ function updateBattleText(result = "") {
   }
 }
 
+// A finished game restores real start controls instead of leaving hidden restart targets in battle artwork.
 function resetStarterPokeballs() {
   starterPokeballs.forEach((pokeball) => {
     pokeball.querySelector("img").src = pokeballImage
@@ -116,6 +118,7 @@ function resetGame() {
 }
 
 function resolveBattle() {
+  // Mouseover can fire repeatedly; a new player choice must be required for each score change.
   if (!roundReady || gameOver) {
     return
   }

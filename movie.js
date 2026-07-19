@@ -1,10 +1,10 @@
-//
 let movieForm = document.querySelector("#movieForm")
 let error = document.querySelector("#movieStatus")
 let movieBox = document.querySelector("#movieBox")
 let movieSubmitButton = document.querySelector("#movieSubmt")
 let count = 0
 
+// Build status and API text as DOM nodes so response values are never parsed as HTML.
 function setStatusLines(...lines) {
     error.replaceChildren()
     lines.forEach((line, index) => {

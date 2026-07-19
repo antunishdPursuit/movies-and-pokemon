@@ -5,6 +5,7 @@ const pokemonResponse = {
   }
 }
 
+// Stub external APIs so these tests verify this project's UI and state behavior deterministically.
 describe("Movies and Pokemon", () => {
   it("supports a complete keyboard-playable Pokemon game", () => {
     cy.intercept("GET", "https://pokeapi.co/api/v2/pokemon/**", pokemonResponse)
