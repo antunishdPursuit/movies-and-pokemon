@@ -2,6 +2,7 @@
 let movieForm = document.querySelector("#movieForm")
 let error = document.querySelector("h4")
 let movieBox = document.querySelector("#movieBox")
+let movieSubmitButton = document.querySelector("#movieSubmt")
 let count = 0
 
 function setStatusLines(...lines) {
@@ -21,6 +22,11 @@ function createMovieField(label, value) {
     return field
 }
 
+function setLoading(isLoading) {
+    movieSubmitButton.disabled = isLoading
+    movieSubmitButton.textContent = isLoading ? "Searching..." : "Movie Search"
+}
+
 window.onload = () => {
   movieForm.addEventListener("submit", (event) => {
     count++
@@ -31,10 +37,10 @@ window.onload = () => {
             setStatusLines("More than 3 Letters", "And no symbols")
         } else {
             error.textContent = "Movie Search"
+            setLoading(true)
         fetch(`https://www.omdbapi.com/?apikey=5e8cd208&s=${movieType}`)
         .then((response) => response.json())
         .then((json) => {
-            console.log(json)
             let searchResults = json.Search
             let needToRemove = document.querySelectorAll(".remove")
             if(count > 1){
@@ -44,7 +50,7 @@ window.onload = () => {
 
                 }
             }
-            if(searchResults === undefined){
+            if(searchResults === undefined || json.Response === "False"){
             error.textContent = "No Search Results, Please Try again"
             } else {
             setStatusLines(`Total Movies: ${json.totalResults}`, "Only displaying the top 10")
@@ -103,12 +109,12 @@ window.onload = () => {
             }
 
         })
-        .catch((error) => {
-            console.log(error);
-        });
+        .catch(() => {
+            error.textContent = "Unable to load movies. Please try again."
+        })
+        .finally(() => setLoading(false))
         }
         event.target.movie.value = ""
 
     })
 }
-
