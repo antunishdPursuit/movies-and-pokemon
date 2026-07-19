@@ -4,6 +4,23 @@ let error = document.querySelector("h4")
 let movieBox = document.querySelector("#movieBox")
 let count = 0
 
+function setStatusLines(...lines) {
+    error.replaceChildren()
+    lines.forEach((line, index) => {
+        if (index > 0) {
+            error.append(document.createElement("br"))
+        }
+        error.append(document.createTextNode(line))
+    })
+}
+function createMovieField(label, value) {
+    let field = document.createElement("p")
+    let fieldLabel = document.createElement("strong")
+    fieldLabel.textContent = `${label}:`
+    field.append(fieldLabel, document.createTextNode(` ${value}`))
+    return field
+}
+
 window.onload = () => {
   movieForm.addEventListener("submit", (event) => {
     count++
@@ -11,9 +28,9 @@ window.onload = () => {
         let movieType = event.target.movie.value.toLowerCase()
         const symbols = /[^\w]/g
         if(movieType.split(" ")[0].length < 3 || movieType.split(" ")[0].search(symbols) >= 0){
-            error.innerHTML = "More than 3 Letters <br> And no symbols"
+            setStatusLines("More than 3 Letters", "And no symbols")
         } else {
-            error.innerHTML = "Movie Search"
+            error.textContent = "Movie Search"
         fetch(`https://www.omdbapi.com/?apikey=5e8cd208&s=${movieType}`)
         .then((response) => response.json())
         .then((json) => {
@@ -24,13 +41,13 @@ window.onload = () => {
                 for (let index = 0; index < needToRemove.length; index++) {
                     const element = needToRemove[index];
                     element.remove()
-                    
+
                 }
             }
             if(searchResults === undefined){
-            error.innerHTML = "No Search Results, Please Try again"
+            error.textContent = "No Search Results, Please Try again"
             } else {
-            error.innerHTML = `Total Movies: ${json.totalResults} <br> Only displaying the top 10`
+            setStatusLines(`Total Movies: ${json.totalResults}`, "Only displaying the top 10")
                 for (let index = 0; index < searchResults.length; index++) {
                     const element = searchResults[index];
                     let lowerCased = element.Title.toLowerCase()
@@ -45,14 +62,10 @@ window.onload = () => {
                         poster.alt = element.Title
                         poster.classList.add("poster")
                         poster.src = element.Poster
-                        let title = document.createElement("p")
-                        title.innerHTML = `<strong>Title:</strong> ${element.Title}`
-                        let type = document.createElement("p")
-                        type.innerHTML = `<strong>Type:</strong> ${element.Type}`
-                        let year = document.createElement("p")
-                        year.innerHTML = `<strong>Year:</strong> ${element.Year}`
-                        let imdbID = document.createElement("p")
-                        imdbID.innerHTML = `<strong>ImdbID:</strong> ${element.imdbID}`
+                        let title = createMovieField("Title", element.Title)
+                        let type = createMovieField("Type", element.Type)
+                        let year = createMovieField("Year", element.Year)
+                        let imdbID = createMovieField("ImdbID", element.imdbID)
                         movieSearched.append(poster)
                         movieSearched.append(title)
                         movieSearched.append(type)
@@ -75,14 +88,10 @@ window.onload = () => {
                         poster.alt = element.Title
                         poster.classList.add("poster")
                         poster.src = element.Poster
-                        let title = document.createElement("p")
-                        title.innerHTML = `<strong>Title:</strong> ${element.Title}`
-                        let type = document.createElement("p")
-                        type.innerHTML = `<strong>Type:</strong> ${element.Type}`
-                        let year = document.createElement("p")
-                        year.innerHTML = `<strong>Year:</strong> ${element.Year}`
-                        let imdbID = document.createElement("p")
-                        imdbID.innerHTML = `<strong>ImdbID:</strong> ${element.imdbID}`
+                        let title = createMovieField("Title", element.Title)
+                        let type = createMovieField("Type", element.Type)
+                        let year = createMovieField("Year", element.Year)
+                        let imdbID = createMovieField("ImdbID", element.imdbID)
                         movieSearched.append(poster)
                         movieSearched.append(title)
                         movieSearched.append(type)
@@ -102,4 +111,4 @@ window.onload = () => {
 
     })
 }
-  
+
