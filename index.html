@@ -30,12 +30,12 @@
         <main class="container">
             <div class="row  align-items-center">
                 <div class="col-auto align-items-start">
-                    <img class="row playerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row playerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row playerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row playerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row playerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row playerPokemon" src="clearBackground.png" alt="Random Pokemon">
+                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
+                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
+                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
+                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
+                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
+                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
                 </div>
                 <div class="col row"> 
                     <!-- justify-content-center -->
@@ -55,11 +55,12 @@
                         I am currently working to understand how these AI models are created and hope to contribute to the future of AI.
                     </p>
                     <div class="row justify-content-center" id="pokeballContainer">
-                        <img src = "pokeball.png" alt="pokeball" id = "gardevoir"class="col-auto pokeball">
-                        <img src = "pokeball.png" alt="pokeball" id = "lopunny"class="col-auto pokeball">
-                        <img src = "pokeball.png" alt="pokeball" id = "primarina"class="col-auto align-items-end pokeball">
+                        <button class="col-auto pokeball" type="button" aria-label="Start a game with Gardevoir"><img src="pokeball.png" alt="" id="gardevoir"></button>
+                        <button class="col-auto pokeball" type="button" aria-label="Start a game with Lopunny"><img src="pokeball.png" alt="" id="lopunny"></button>
+                        <button class="col-auto align-items-end pokeball" type="button" aria-label="Start a game with Primarina"><img src="pokeball.png" alt="" id="primarina"></button>
                     </div>
-                    <p class=" align-items-end" id = "changeText">
+                    <button id="resetGame" type="button" hidden>Play again</button>
+                    <p class=" align-items-end" id = "changeText" role="status" aria-live="polite">
                         <strong>Instructions:</strong> <br>
                         The above functionality showcases the click event listener.
                         <br>

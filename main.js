@@ -2,6 +2,7 @@ let pokeArr = ["gardevoir", "lopunny", "primarina"]
 let randomPokemon = document.getElementById("randomPokemon")
 let starterPokemonsters = [3, 6, 9, 12, 15, 18]
 let playerPokemons = document.querySelectorAll(".playerPokemon")
+let playerChoices = document.querySelectorAll(".pokemon-choice")
 let trainerPokemons = document.querySelectorAll(".trainerPokemon")
 let starterPokeballs = document.querySelectorAll(".pokeball")
 let gardevoir = document.querySelector("#gardevoir")
@@ -9,12 +10,14 @@ let lopunny = document.querySelector("#lopunny")
 let primarina = document.querySelector("#primarina")
 let pokeballContainer = document.querySelector("#pokeballContainer")
 let changeText = document.getElementById("changeText")
+let resetButton = document.getElementById("resetGame")
 
 let playerScore = 0
 let enemyScore = 0
 let gameStarted = false
 let gameOver = false
 let roundReady = false
+let selectedStarter = ""
 
 function loadPokemon(id, image, sprite = "front_default") {
   fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
@@ -47,7 +50,7 @@ function updateBattleText(result = "") {
 
 function resetStarterPokeballs() {
   starterPokeballs.forEach((pokeball) => {
-    pokeball.src = "pokeball.png"
+    pokeball.querySelector("img").src = "pokeball.png"
   })
   pokeballContainer.classList.remove("justify-content-between")
   pokeballContainer.classList.add("justify-content-center")
@@ -59,6 +62,8 @@ function startGame(starterName) {
   gameStarted = true
   gameOver = false
   roundReady = false
+  selectedStarter = starterName
+  resetButton.hidden = true
 
   pokeballContainer.classList.remove("justify-content-center")
   pokeballContainer.classList.add("justify-content-between")
@@ -83,7 +88,7 @@ function selectPlayerPokemon(event) {
   let opponentTeam = Array.from(trainerPokemons).slice(1)
   let opponent = opponentTeam[Math.floor(Math.random() * opponentTeam.length)]
 
-  gardevoir.src = event.currentTarget.src
+  gardevoir.src = event.currentTarget.querySelector(".playerPokemon").src
   primarina.src = opponent.src
   lopunny.src = "fight.gif"
   roundReady = true
@@ -93,7 +98,14 @@ function finishGame(winner) {
   gameOver = true
   roundReady = false
   resetStarterPokeballs()
+  resetButton.hidden = false
   updateBattleText(`${winner} wins the game! Click a Pokeball to start a new game.`)
+}
+
+function resetGame() {
+  if (selectedStarter) {
+    startGame(selectedStarter)
+  }
 }
 
 function resolveBattle() {
@@ -127,6 +139,7 @@ window.onload = () => {
   starterPokeballs.forEach((pokeball, index) => {
     pokeball.addEventListener("click", () => startGame(pokeArr[index]))
   })
-  playerPokemons.forEach((pokemon) => pokemon.addEventListener("click", selectPlayerPokemon))
+  playerChoices.forEach((pokemon) => pokemon.addEventListener("click", selectPlayerPokemon))
   lopunny.addEventListener("mouseover", resolveBattle)
+  resetButton.addEventListener("click", resetGame)
 }

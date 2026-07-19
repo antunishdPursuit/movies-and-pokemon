@@ -32,9 +32,10 @@
         <div class="row">
             <aside class="col-md-3" id="leftSideBox">
                 <form id="movieForm">
-                        <h4 class="marginBottom">Movie Search</h4> 
+                        <h4 class="marginBottom" id="movieStatus" role="status" aria-live="polite">Movie Search</h4>
                         <button class="marginBottom" id = "movieSubmt" type="submit">Movie Search</button>
-                        <input required class="marginBottom" id="movie" type="data" placeholder="Type Movie...">
+                        <label class="marginBottom" for="movie">Movie title</label>
+                        <input required class="marginBottom" id="movie" type="search" placeholder="Type Movie...">
                   </form>
                   <p>
                     Requires one input: a word to search for a Movie(No symbols and more than 3 characters)<br>

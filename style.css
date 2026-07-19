@@ -80,8 +80,32 @@ img {
 }
 /* width of the pokeballs */
 .pokeball {
-    width: 1em;
-    height: 3.5em;
+    width: 100px;
+    height: 100px;
+}
+
+.pokeball,
+.pokemon-choice {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+
+.pokeball,
+.pokemon-choice,
+#resetGame {
+    cursor: pointer;
+}
+
+.pokeball:focus-visible,
+.pokemon-choice:focus-visible,
+#resetGame:focus-visible,
+#movie:focus-visible,
+#movieSubmt:focus-visible {
+    outline: 3px solid #060918;
+    outline-offset: 3px;
 }
 
 .hidden {

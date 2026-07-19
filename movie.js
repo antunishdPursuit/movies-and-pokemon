@@ -1,6 +1,6 @@
 //
 let movieForm = document.querySelector("#movieForm")
-let error = document.querySelector("h4")
+let error = document.querySelector("#movieStatus")
 let movieBox = document.querySelector("#movieBox")
 let movieSubmitButton = document.querySelector("#movieSubmt")
 let count = 0
