@@ -34,4 +34,4 @@ Then open `http://127.0.0.1:4174` in a browser.
 
 - Pokemon data is loaded live and may be unavailable if PokeAPI is unreachable.
 - Movie search results depend on OMDb's availability and daily rate limit.
-- Automated tests and continuous integration are being added as part of the current maintenance work.
+- Browser tests cover the core game flow and movie-search success and failure states. GitHub Actions runs the build and test suite for pull requests and updates to `main`.

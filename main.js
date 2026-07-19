@@ -1,3 +1,10 @@
+import clearBackground from "./clearBackground.png"
+import defeatImage from "./defeat.gif"
+import fightImage from "./fight.gif"
+import leftImage from "./left.png"
+import pokeballImage from "./pokeball.png"
+import rightImage from "./right.png"
+
 let pokeArr = ["gardevoir", "lopunny", "primarina"]
 let randomPokemon = document.getElementById("randomPokemon")
 let starterPokemonsters = [3, 6, 9, 12, 15, 18]
@@ -50,7 +57,7 @@ function updateBattleText(result = "") {
 
 function resetStarterPokeballs() {
   starterPokeballs.forEach((pokeball) => {
-    pokeball.querySelector("img").src = "pokeball.png"
+    pokeball.querySelector("img").src = pokeballImage
   })
   pokeballContainer.classList.remove("justify-content-between")
   pokeballContainer.classList.add("justify-content-center")
@@ -67,9 +74,9 @@ function startGame(starterName) {
 
   pokeballContainer.classList.remove("justify-content-center")
   pokeballContainer.classList.add("justify-content-between")
-  gardevoir.src = "clearBackground.png"
-  lopunny.src = "fight.gif"
-  primarina.src = "clearBackground.png"
+  gardevoir.src = clearBackground
+  lopunny.src = fightImage
+  primarina.src = clearBackground
 
   loadPokemon(starterName, randomPokemon, "front_shiny")
 
@@ -90,7 +97,7 @@ function selectPlayerPokemon(event) {
 
   gardevoir.src = event.currentTarget.querySelector(".playerPokemon").src
   primarina.src = opponent.src
-  lopunny.src = "fight.gif"
+  lopunny.src = fightImage
   roundReady = true
 }
 
@@ -118,12 +125,12 @@ function resolveBattle() {
 
   if (playerWon) {
     playerScore++
-    lopunny.src = "right.png"
-    gardevoir.src = "defeat.gif"
+    lopunny.src = rightImage
+    gardevoir.src = defeatImage
   } else {
     enemyScore++
-    lopunny.src = "left.png"
-    primarina.src = "defeat.gif"
+    lopunny.src = leftImage
+    primarina.src = defeatImage
   }
 
   if (playerScore === 6) {
