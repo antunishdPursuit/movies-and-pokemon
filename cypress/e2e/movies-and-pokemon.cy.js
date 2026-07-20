@@ -61,6 +61,11 @@ describe("Movies and Pokemon", () => {
           expect($image[0].naturalWidth).to.be.greaterThan(0)
           expect($image[0].alt).to.equal("")
         })
+        cy.get("#lopunny").should(($image) => {
+          expect($image[0].complete).to.equal(true)
+          expect($image[0].naturalWidth).to.be.greaterThan(0)
+          expect($image[0].src).to.include("right")
+        })
         cy.get("#battleControl").should("have.css", "cursor", "default")
       } else {
         cy.get("#battleControl").trigger("mouseover")

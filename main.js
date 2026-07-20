@@ -1,9 +1,10 @@
-import clearBackground from "./clearBackground.png"
-import defeatImage from "./defeat.gif"
-import fightImage from "./fight.gif"
-import leftImage from "./left.png"
-import pokeballImage from "./pokeball.png"
-import rightImage from "./right.png"
+// Module-relative URLs work with both Vite and the plain local server in the README.
+const clearBackground = new URL("./clearBackground.png", import.meta.url).href
+const defeatImage = new URL("./defeat.gif", import.meta.url).href
+const fightImage = new URL("./fight.gif", import.meta.url).href
+const leftImage = new URL("./left.png", import.meta.url).href
+const pokeballImage = new URL("./pokeball.png", import.meta.url).href
+const rightImage = new URL("./right.png", import.meta.url).href
 
 let teamPokemonIds = [3, 6, 9, 12, 15, 18]
 let playerTeamPokemon = document.querySelectorAll(".playerPokemon")
