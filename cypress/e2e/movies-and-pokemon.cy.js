@@ -10,6 +10,7 @@ describe("Movies and Pokemon", () => {
   it("ends the Pokemon match when the player wins two battles", () => {
     cy.intercept("GET", "https://pokeapi.co/api/v2/pokemon/**", pokemonResponse)
     cy.visit("/")
+    cy.get(".game-instructions").should("contain", "Hover over or select Fight")
 
     cy.get('button[aria-label="Choose Gardevoir as your player"]').focus().type("{enter}")
     cy.get('.player-choice[data-player-state="active"]').should("have.length", 1)
@@ -24,24 +25,33 @@ describe("Movies and Pokemon", () => {
       cy.get(".pokemon-choice").eq(round).click()
       cy.get(".pokemon-choice").eq(round).should("be.disabled").and("have.attr", "data-team-state", "used")
       cy.get('[aria-labelledby="opponent-team-title"] .trainerPokemon[data-team-state="used"]').should("have.length", round + 1)
-      cy.get("#lopunny").trigger("mouseover")
+      if (round === 0) {
+        cy.get("#battleControl").should("be.enabled").click()
+        cy.get("#gardevoir").should("have.attr", "src").and("not.include", "defeat")
+        cy.get("#primarina").should("have.attr", "src").and("include", "defeat")
+      } else {
+        cy.get("#battleControl").trigger("mouseover")
+      }
     }
 
-    cy.get("#changeText").should("contain", "Match: Player 1 vs Opponent 0")
+    cy.get("#playerMatchScore").should("have.text", "1")
+    cy.get("#opponentMatchScore").should("have.text", "0")
     cy.get('.player-choice[data-player-state="completed"]').should("have.length", 1)
     cy.get('.player-choice[data-player-state="available"]').should("have.length", 2)
 
     cy.get('.player-choice[data-player="lopunny"]').click()
     for (let round = 0; round < 6; round++) {
       cy.get(".pokemon-choice").eq(round).click()
-      cy.get("#lopunny").trigger("mouseover")
+      cy.get("#battleControl").trigger("mouseover")
     }
 
-    cy.get("#changeText").should("contain", "Match: Player 2 vs Opponent 0")
+    cy.get("#playerMatchScore").should("have.text", "2")
+    cy.get("#opponentMatchScore").should("have.text", "0")
     cy.get("#changeText").should("contain", "Congratulations, you won the match!")
     cy.get("#resetGame").should("be.visible").click()
     cy.get("#resetGame").should("not.be.visible")
-    cy.get("#changeText").should("contain", "Match: Player 0 vs Opponent 0")
+    cy.get("#playerMatchScore").should("have.text", "0")
+    cy.get("#opponentMatchScore").should("have.text", "0")
     cy.get('.player-choice[data-player-state="available"]').should("have.length", 3)
     cy.get(".pokemon-choice").should("be.disabled")
   })
@@ -64,10 +74,10 @@ describe("Movies and Pokemon", () => {
 
     for (let round = 0; round < 6; round++) {
       cy.get(".pokemon-choice").eq(round).click()
-      cy.get("#lopunny").trigger("mouseover")
+      cy.get("#battleControl").trigger("mouseover")
     }
 
-    cy.get("#changeText").should("contain", "All six Pokemon have battled")
+    cy.get("#roundStatus").should("contain", "All six Pokemon have battled")
     cy.get('.pokemon-choice[data-team-state="available"]').should("have.length", 6).and("be.enabled")
     cy.get('[aria-labelledby="opponent-team-title"] .trainerPokemon[data-team-state="used"]').should("not.exist")
   })

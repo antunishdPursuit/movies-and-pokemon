@@ -27,6 +27,13 @@
             <p class="pokemon-eyebrow">Pokemon Battle</p>
             <h1 id="battle-title">Build your team. Win the battle.</h1>
             <p>Choose a player, pick one Pokemon from the team for each round, and be the first to six wins.</p>
+            <h2>How to play</h2>
+            <ol class="game-instructions">
+                <li>Choose Gardevoir, Lopunny, or Primarina as your player.</li>
+                <li>Choose one Pokemon from your team.</li>
+                <li>Hover over or select Fight to resolve the round.</li>
+                <li>Win six rounds to win a battle. Win two battles to win the match.</li>
+            </ol>
         </section>
 
         <section class="pokemon-game" aria-label="Pokemon battle game">
@@ -55,30 +62,45 @@
 
                 <section class="battle-stage" aria-labelledby="battle-stage-title">
                     <h2 id="battle-stage-title">Battle stage</h2>
-                    <div class="battle-leaders">
-                        <div><span>Opponent</span><img class="trainerPokemon" id="randomShinyPokemon" src="clearBackground.png" alt="Opponent player"></div>
+                    <div class="battle-score" aria-label="Current battle score">
+                        <div><span>Player</span><strong id="playerBattleScore">0</strong></div>
+                        <div><span>Opponent</span><strong id="opponentBattleScore">0</strong></div>
                     </div>
                     <div class="battle-action" aria-label="Current battle">
                         <img id="gardevoir" src="clearBackground.png" alt="Player's current Pokemon">
-                        <img id="lopunny" src="clearBackground.png" alt="Battle result">
+                        <button id="battleControl" class="battle-control" type="button" aria-label="Resolve this round" disabled><img id="lopunny" src="clearBackground.png" alt="Fight"></button>
                         <img id="primarina" src="clearBackground.png" alt="Opponent's current Pokemon">
                     </div>
-                    <p id="changeText" class="battle-status" role="status" aria-live="polite"><strong>How to play:</strong> Choose a player, select a Pokemon from the team, then move over the center battle image to resolve the round.</p>
+                    <p id="roundStatus" class="round-status" aria-live="polite">Choose a team Pokemon to prepare the round.</p>
                 </section>
 
                 <section class="team-card" aria-labelledby="opponent-team-title">
                     <h2 id="opponent-team-title">Opponent team</h2>
                     <p>A rival is picked each round.</p>
                     <div class="team-grid">
-                        <img class="trainerPokemon" src="clearBackground.png" alt="Opponent team Pokemon">
-                        <img class="trainerPokemon" src="clearBackground.png" alt="Opponent team Pokemon">
-                        <img class="trainerPokemon" src="clearBackground.png" alt="Opponent team Pokemon">
-                        <img class="trainerPokemon" src="clearBackground.png" alt="Opponent team Pokemon">
-                        <img class="trainerPokemon" src="clearBackground.png" alt="Opponent team Pokemon">
-                        <img class="trainerPokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
                     </div>
                 </section>
             </div>
+
+            <section class="match-summary" aria-labelledby="match-score-title">
+                <h2 id="match-score-title">Match score</h2>
+                <div class="match-score" aria-label="Overall match score">
+                    <div><span>Player</span><strong id="playerMatchScore">0</strong></div>
+                    <div><span>Opponent</span><strong id="opponentMatchScore">0</strong></div>
+                </div>
+                <p id="changeText" class="match-status" role="status" aria-live="polite">Choose a player to begin the first battle.</p>
+            </section>
+
+            <section class="opponent-player-card" aria-labelledby="opponent-player-title">
+                <h2 id="opponent-player-title">Opponent player</h2>
+                <img class="trainerPokemon" id="randomShinyPokemon" src="clearBackground.png" alt="Opponent player">
+            </section>
         </section>
     </main>
 
