@@ -88,18 +88,20 @@
                 </section>
             </div>
 
-            <section class="match-summary" aria-labelledby="match-score-title">
-                <h2 id="match-score-title">Match score</h2>
-                <div class="match-score" aria-label="Overall match score">
-                    <div><span>Player</span><strong id="playerMatchScore">0</strong></div>
-                    <div><span>Opponent</span><strong id="opponentMatchScore">0</strong></div>
+            <section class="match-opponent-panel" aria-label="Match score and opponent player">
+                <div class="match-summary" aria-labelledby="match-score-title">
+                    <h2 id="match-score-title">Match score</h2>
+                    <div class="match-score" aria-label="Overall match score">
+                        <div><span>Player</span><strong id="playerMatchScore">0</strong></div>
+                        <div><span>Opponent</span><strong id="opponentMatchScore">0</strong></div>
+                    </div>
+                    <p id="changeText" class="match-status" role="status" aria-live="polite">Choose a player to begin the first battle.</p>
                 </div>
-                <p id="changeText" class="match-status" role="status" aria-live="polite">Choose a player to begin the first battle.</p>
-            </section>
 
-            <section class="opponent-player-card" aria-labelledby="opponent-player-title">
-                <h2 id="opponent-player-title">Opponent player</h2>
-                <img class="trainerPokemon" id="randomShinyPokemon" src="clearBackground.png" alt="Opponent player">
+                <div class="opponent-player-card" aria-labelledby="opponent-player-title">
+                    <h2 id="opponent-player-title">Opponent player</h2>
+                    <img class="trainerPokemon" id="randomShinyPokemon" src="clearBackground.png" alt="Opponent player">
+                </div>
             </section>
         </section>
     </main>
