@@ -6,30 +6,27 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Movies and Pokemon</title>
         <meta name="description" content="Search movies with the OMDb API in this vanilla JavaScript playground.">
-        <link rel="stylesheet" href="style.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
         <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
         <link rel="manifest" href="favicon_io/site.webmanifest">
     </head>
-<body id="movieBackground">
-    <header class="container" id="movieHeaderBackground">
-            <div class="row ">
-                <div class="col-auto borderRight">
-                    <img class="row" id="randomPokemon" src="programming.gif" alt="Random Pokemon">
-                </div>
-                <div class="col row align-items-center justify-content-center">
-
-                    <h1 class="col-auto"><a href="index.html" target="_self" rel="noopener noreferrer">About</a></h1>
-                    <h1 class="col-auto"><a href="about.html" target="_self" rel="noopener noreferrer">Movie</a></h1>
-                </div>
-                <div class="col-auto borderLeft">
-                    <img class="row trainerPokemon" id="randomShinyPokemon" src="programming2.gif" alt="Random Pokemon">
-                </div>
-            </div>
+<body id="movieBackground" class="movie-page">
+    <header class="site-header">
+        <img class="site-header-art" src="programming.gif" alt="">
+        <div class="site-header-center">
+            <a class="site-brand" href="index.html">Movies and Pokemon</a>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a href="index.html">Pokemon Battle</a>
+                <a href="about.html" aria-current="page">Movie Search</a>
+            </nav>
+        </div>
+        <img class="site-header-art" src="programming2.gif" alt="">
     </header>
-    <main class="container">
+    <main class="container movie-main">
+        <h1 class="movie-page-title">Find a movie to watch</h1>
         <div class="row">
             <aside class="col-md-3" id="leftSideBox">
                 <form id="movieForm">
@@ -49,22 +46,13 @@
             </aside>
         </div>
     </main>        
-    <footer class="container" id="movieFooterBackground">
-            <div class="row">
-                <div class="col-auto borderRight">
-                    <img class = "row" src="programming3.gif" alt="girl programming">
-                </div>
-                <div class="col row align-items-end justify-content-end borderSide">
-                    <h4 class="col-auto footer"><a href="https://github.com/antunishdPursuit" target="_blank" rel="noopener noreferrer">Github</a></h4>
-                    <h4 class="col-auto footer"><a href="https://www.linkedin.com/in/dennys-antunish/" target="_blank" rel="noopener noreferrer">Linkedin</a></h4>
-                </div>
-                <div class="col-auto" style="
-                padding-left: 0px;
-                padding-right: 0px;
-            ">
-                    <img src="clearBackground.png" alt="Random Pokemon">
-                </div>
-            </div>
+    <footer class="site-footer" id="siteFooterBackground">
+        <img class="site-footer-art" src="programming3.gif" alt="">
+        <p>Movies and Pokemon</p>
+        <div>
+            <a href="https://github.com/antunishdPursuit" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/in/dennys-antunish/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </div>
     </footer>
     <script type="module" src="movie.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

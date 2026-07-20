@@ -7,6 +7,46 @@ const pokemonResponse = {
 
 // Stub external APIs so these tests verify this project's UI and state behavior deterministically.
 describe("Movies and Pokemon", () => {
+  it("uses the shared site shell on both pages", () => {
+    const verifyShell = (activePage) => {
+      cy.get(".site-header-art").should("have.length", 2).each(($image) => {
+        expect($image[0].complete).to.equal(true)
+        expect($image[0].naturalWidth).to.be.greaterThan(0)
+        expect($image[0].alt).to.equal("")
+      })
+      cy.get(".site-brand").should("have.text", "Movies and Pokemon")
+      cy.get(".site-nav a").should("have.length", 2)
+      cy.get('.site-nav a[aria-current="page"]').should("have.text", activePage)
+      cy.get(".site-footer-art").should(($image) => {
+        expect($image[0].complete).to.equal(true)
+        expect($image[0].naturalWidth).to.be.greaterThan(0)
+        expect($image[0].alt).to.equal("")
+      })
+      cy.get(".site-footer").should("contain", "Movies and Pokemon").and("contain", "GitHub").and("contain", "LinkedIn")
+    }
+
+    cy.visit("/")
+    verifyShell("Pokemon Battle")
+
+    cy.visit("/about.html")
+    verifyShell("Movie Search")
+    cy.get("h1").should("have.text", "Find a movie to watch")
+  })
+
+  it("keeps the shared shell usable on a narrow screen", () => {
+    cy.viewport(375, 667)
+
+    ;["/", "/about.html"].forEach((path) => {
+      cy.visit(path)
+      cy.get(".site-header, .site-footer").each(($shell) => {
+        const shell = $shell[0].getBoundingClientRect()
+        expect(shell.left).to.be.at.least(0)
+        expect(shell.right).to.be.at.most(375)
+      })
+      cy.get(".site-nav a").should("be.visible")
+    })
+  })
+
   it("keeps the ready-to-fight content inside the desktop battle stage", () => {
     cy.viewport(1903, 959)
     cy.intercept("GET", "https://pokeapi.co/api/v2/pokemon/**", pokemonResponse)
