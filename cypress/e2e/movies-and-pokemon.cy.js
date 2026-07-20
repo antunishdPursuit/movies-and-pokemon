@@ -14,6 +14,16 @@ describe("Movies and Pokemon", () => {
         expect($image[0].naturalWidth).to.be.greaterThan(0)
         expect($image[0].alt).to.equal("")
       })
+      cy.get(".site-header").then(($header) => {
+        const header = $header[0].getBoundingClientRect()
+        cy.get(".site-header-art").each(($image, index) => {
+          const image = $image[0].getBoundingClientRect()
+          expect(image.top).to.be.closeTo(header.top + 2, 1)
+          expect(image.bottom).to.be.closeTo(header.bottom - 2, 1)
+          if (index === 0) expect(image.left).to.be.closeTo(header.left + 2, 1)
+          if (index === 1) expect(image.right).to.be.closeTo(header.right - 2, 1)
+        })
+      })
       cy.get(".site-brand").should("have.text", "Movies and Pokemon")
       cy.get(".site-nav a").should("have.length", 2)
       cy.get('.site-nav a[aria-current="page"]').should("have.text", activePage)
@@ -21,6 +31,13 @@ describe("Movies and Pokemon", () => {
         expect($image[0].complete).to.equal(true)
         expect($image[0].naturalWidth).to.be.greaterThan(0)
         expect($image[0].alt).to.equal("")
+      })
+      cy.get(".site-footer").then(($footer) => {
+        const footer = $footer[0].getBoundingClientRect()
+        const image = $footer[0].querySelector(".site-footer-art").getBoundingClientRect()
+        expect(image.left).to.be.closeTo(footer.left + 2, 1)
+        expect(image.top).to.be.closeTo(footer.top + 2, 1)
+        expect(image.bottom).to.be.closeTo(footer.bottom - 2, 1)
       })
       cy.get(".site-footer").should("contain", "Movies and Pokemon").and("contain", "GitHub").and("contain", "LinkedIn")
     }
@@ -186,6 +203,8 @@ describe("Movies and Pokemon", () => {
 
     cy.get("#leftSideBox").should("have.css", "border-top-style", "dotted")
     cy.get("#movieStatus").should("have.text", "Enter a movie title to begin.")
+    cy.get(".movie-results").should("not.be.visible")
+    cy.get("#movieResultsTitle").should("not.exist")
     cy.get("#movie").type("Spider-Man")
     cy.get("#movieYear").type("2002")
     cy.get("#movieForm").submit()
@@ -201,6 +220,11 @@ describe("Movies and Pokemon", () => {
     cy.get(".movie-card h3").should("contain.text", "<img src=x onerror=alert(1)>")
     cy.get(".movie-poster-placeholder").should("be.visible").and("contain", "Poster unavailable")
     cy.get(".movie-card").should("not.contain", "ImdbID").and("not.contain", "Type")
+    cy.get(".movie-card-link")
+      .should("have.text", "View on IMDb")
+      .and("have.attr", "href", "https://www.imdb.com/title/tt1234567/")
+      .and("have.attr", "target", "_blank")
+      .and("have.attr", "rel", "noopener noreferrer")
   })
 
   it("shows nine movies in a three-column dotted grid", () => {
@@ -222,8 +246,13 @@ describe("Movies and Pokemon", () => {
     cy.get("#movie").type("Cat")
     cy.get("#movieForm").submit()
 
-    cy.get("#movieResultsTitle").should("have.text", 'Results for "Cat"')
-    cy.get("#movieResultsSummary").should("contain", "1,880 results").and("contain", "Showing 9")
+    cy.get("#movieStatus").should("contain", '1,880 results found for "Cat".').and("contain", "Showing 9 movies.")
+    cy.get("#movieResultsTitle").should("not.exist")
+    cy.get("body").then(($body) => {
+      expect(($body.text().match(/1,880 results/g) || [])).to.have.length(1)
+      expect(($body.text().match(/Showing 9 movies\./g) || [])).to.have.length(1)
+    })
+    cy.get(".movie-results").should("be.visible")
     cy.get("#movieBox").should(($grid) => {
       expect(getComputedStyle($grid[0]).gridTemplateColumns.split(" ")).to.have.length(3)
     })
@@ -244,7 +273,7 @@ describe("Movies and Pokemon", () => {
     cy.get("#movieForm").submit()
 
     cy.get("#movieStatus").should("contain", 'No movies found for "No Such Movie".').and("contain", "Try another title or release year.")
-    cy.get("#movieResultsTitle").should("have.text", 'No results for "No Such Movie"')
+    cy.get(".movie-results").should("not.be.visible")
     cy.get(".movie-card").should("not.exist")
   })
 
@@ -256,6 +285,6 @@ describe("Movies and Pokemon", () => {
     cy.get("#movieForm").submit()
 
     cy.get("#movieStatus").should("have.text", "Unable to load movies. Please try again.")
-    cy.get("#movieResultsTitle").should("have.text", "Results unavailable")
+    cy.get(".movie-results").should("not.be.visible")
   })
 })

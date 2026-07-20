@@ -191,7 +191,6 @@ body{
     background: linear-gradient(20deg, white, #F3E4A2);
 }
 #movieBox {
-    min-height: 14rem;
     padding: 1rem;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -204,26 +203,8 @@ body{
     min-width: 0;
 }
 
-.movie-results-header {
-    padding: 0.75rem 1rem;
-    border: 2px solid #060918;
-    border-bottom: 0;
-    background: rgb(243 228 162 / 92%);
-}
-
-.movie-results-header h2,
-.movie-results-header p {
-    margin: 0;
-}
-
-.movie-results-header h2 {
-    font-size: 1.4rem;
-    font-weight: 800;
-}
-
-.movie-results-header p {
-    margin-top: 0.2rem;
-    color: rgb(6 9 24 / 72%);
+.movie-results[hidden] {
+    display: none;
 }
 
 .movie-card {
@@ -278,6 +259,13 @@ body{
 .movie-card-year {
     color: rgb(6 9 24 / 72%);
     font-weight: 700;
+}
+
+.movie-card-link {
+    width: fit-content;
+    color: #060918;
+    font-weight: 800;
+    text-underline-offset: 0.2rem;
 }
 
 @media (max-width: 64rem) {
@@ -359,13 +347,22 @@ body{
 }
 
 .site-header {
+    min-height: 5.5rem;
+    padding: 0;
     display: grid;
-    grid-template-columns: 4.5rem minmax(0, 1fr) 4.5rem;
+    align-items: stretch;
+    grid-template-columns: 5.5rem minmax(0, 1fr) 5.5rem;
     background: linear-gradient(18deg, #ffffff, #F3E4A2);
+}
+
+.site-footer {
+    min-height: 5.5rem;
+    padding: 0 1rem 0 0;
 }
 
 .site-header-center {
     min-width: 0;
+    padding: 0.65rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -379,13 +376,16 @@ body{
 }
 
 .site-header-art {
-    width: 4.5rem;
-    height: 4.5rem;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .site-footer-art {
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 5.5rem;
+    height: auto;
+    align-self: stretch;
+    object-fit: cover;
 }
 
 .site-brand,
@@ -877,12 +877,14 @@ body{
     }
 
     .site-header {
+        min-height: 0;
         grid-template-columns: 3.5rem minmax(0, 1fr) 3.5rem;
-        padding-right: 0.65rem;
-        padding-left: 0.65rem;
+        padding: 0.65rem;
+        align-items: center;
     }
 
     .site-header-center {
+        padding: 0;
         flex-direction: column;
         align-items: stretch;
         gap: 0.4rem;
@@ -891,6 +893,7 @@ body{
     .site-header-art {
         width: 3.5rem;
         height: 3.5rem;
+        object-fit: contain;
     }
 
     .site-nav,
@@ -904,7 +907,16 @@ body{
     }
 
     .site-footer {
+        min-height: 0;
+        padding: 0.65rem 1rem;
         flex-wrap: wrap;
+    }
+
+    .site-footer-art {
+        width: 3.5rem;
+        height: 3.5rem;
+        align-self: center;
+        object-fit: contain;
     }
 
     .player-options {

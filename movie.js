@@ -1,8 +1,7 @@
 let movieForm = document.querySelector("#movieForm")
 let movieStatus = document.querySelector("#movieStatus")
 let movieBox = document.querySelector("#movieBox")
-let movieResultsTitle = document.querySelector("#movieResultsTitle")
-let movieResultsSummary = document.querySelector("#movieResultsSummary")
+let movieResults = document.querySelector(".movie-results")
 let movieSubmitButton = document.querySelector("#movieSubmt")
 
 // Build status and API text as DOM nodes so response values are never parsed as HTML.
@@ -27,7 +26,6 @@ function createPosterPlaceholder(movieTitle) {
 function createMovieCard(movie) {
     let movieCard = document.createElement("article")
     movieCard.className = "movie-card"
-    movieCard.dataset.imdbId = movie.imdbID
 
     let posterFrame = document.createElement("div")
     posterFrame.className = "movie-poster-frame"
@@ -52,6 +50,17 @@ function createMovieCard(movie) {
     year.textContent = movie.Year
 
     movieCard.append(posterFrame, title, year)
+    if (typeof movie.imdbID === "string" && /^tt\d+$/.test(movie.imdbID)) {
+        movieCard.dataset.imdbId = movie.imdbID
+        let imdbLink = document.createElement("a")
+        imdbLink.className = "movie-card-link"
+        imdbLink.href = `https://www.imdb.com/title/${movie.imdbID}/`
+        imdbLink.target = "_blank"
+        imdbLink.rel = "noopener noreferrer"
+        imdbLink.textContent = "View on IMDb"
+        imdbLink.setAttribute("aria-label", `View ${movie.Title} on IMDb`)
+        movieCard.append(imdbLink)
+    }
     return movieCard
 }
 
@@ -60,11 +69,6 @@ function orderMovieResults(searchResults, query) {
     let startsWithQuery = searchResults.filter((movie) => movie.Title.toLowerCase().startsWith(normalizedQuery))
     let includesQuery = searchResults.filter((movie) => !movie.Title.toLowerCase().startsWith(normalizedQuery))
     return startsWithQuery.concat(includesQuery)
-}
-
-function setResultsHeading(title, summary) {
-    movieResultsTitle.textContent = title
-    movieResultsSummary.textContent = summary
 }
 
 function setLoading(isLoading) {
@@ -86,7 +90,7 @@ window.onload = () => {
 
         setStatusLines(`Searching for "${movieTitle}"...`)
         movieBox.replaceChildren()
-        setResultsHeading(`Searching for "${movieTitle}"`, "Please wait while the movie results load.")
+        movieResults.hidden = true
         setLoading(true)
 
         let apiParameters = new URLSearchParams({
@@ -104,21 +108,19 @@ window.onload = () => {
             let searchResults = json.Search
             if(searchResults === undefined || json.Response === "False"){
                 setStatusLines(`No movies found for "${movieTitle}".`, "Try another title or release year.")
-                setResultsHeading(`No results for "${movieTitle}"`, "Try a different title or release year.")
             } else {
                 let visibleResults = orderMovieResults(searchResults, movieTitle).slice(0, 9)
                 let formattedTotal = Number(json.totalResults).toLocaleString()
                 let resultLabel = Number(json.totalResults) === 1 ? "result" : "results"
                 let visibleLabel = visibleResults.length === 1 ? "movie" : "movies"
                 setStatusLines(`${formattedTotal} ${resultLabel} found for "${movieTitle}".`, `Showing ${visibleResults.length} ${visibleLabel}.`)
-                setResultsHeading(`Results for "${movieTitle}"`, `${formattedTotal} ${resultLabel} · Showing ${visibleResults.length}`)
                 movieBox.append(...visibleResults.map(createMovieCard))
+                movieResults.hidden = false
             }
 
         })
         .catch(() => {
             movieStatus.textContent = "Unable to load movies. Please try again."
-            setResultsHeading("Results unavailable", "Please try the search again.")
         })
         .finally(() => setLoading(false))
     })
