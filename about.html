@@ -27,7 +27,7 @@
     </header>
     <main class="container movie-main">
         <h1 class="movie-page-title">Find a movie to watch</h1>
-        <div class="row">
+        <div class="row movie-layout">
             <aside class="col-md-3 movie-search-panel" id="leftSideBox" aria-labelledby="movie-search-title">
                 <h2 id="movie-search-title">Movie Search</h2>
                 <form class="movie-search-form" id="movieForm">
@@ -44,10 +44,13 @@
                 <p class="movie-search-help" id="movieSearchHelp">Spaces and punctuation are allowed.</p>
                 <p class="movie-search-status" id="movieStatus" role="status" aria-live="polite">Enter a movie title to begin.</p>
             </aside>
-            <aside class="col">
-                <div class="row" id="movieBox">
+            <section class="col movie-results" aria-labelledby="movieResultsTitle">
+                <div class="movie-results-header">
+                    <h2 id="movieResultsTitle">Movie results</h2>
+                    <p id="movieResultsSummary">Search for a movie to see results.</p>
                 </div>
-            </aside>
+                <div class="movie-results-grid" id="movieBox"></div>
+            </section>
         </div>
     </main>        
     <footer class="site-footer" id="siteFooterBackground">

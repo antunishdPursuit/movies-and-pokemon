@@ -197,9 +197,40 @@ describe("Movies and Pokemon", () => {
     cy.get("#movie").should("have.value", "Spider-Man")
     cy.get("#movieYear").should("have.value", "2002")
     cy.get("#movieSubmt").should("have.text", "Search movies").and("be.enabled")
-    cy.get(".movieBoxes").should("have.length", 1)
-    cy.get(".movieBoxes p").first().should("contain.text", "<img src=x onerror=alert(1)>")
-    cy.get(".movieBoxes img").should("have.length", 1)
+    cy.get(".movie-card").should("have.length", 1)
+    cy.get(".movie-card h3").should("contain.text", "<img src=x onerror=alert(1)>")
+    cy.get(".movie-poster-placeholder").should("be.visible").and("contain", "Poster unavailable")
+    cy.get(".movie-card").should("not.contain", "ImdbID").and("not.contain", "Type")
+  })
+
+  it("shows nine movies in a three-column dotted grid", () => {
+    const movies = Array.from({ length: 10 }, (_, index) => ({
+      Title: `Cat Movie ${index + 1}`,
+      Type: "movie",
+      Year: String(2000 + index),
+      imdbID: `tt000000${index}`,
+      Poster: "N/A"
+    }))
+    cy.intercept("GET", "https://www.omdbapi.com/**", {
+      Response: "True",
+      totalResults: "1880",
+      Search: movies
+    })
+    cy.viewport(1400, 900)
+    cy.visit("/about.html")
+
+    cy.get("#movie").type("Cat")
+    cy.get("#movieForm").submit()
+
+    cy.get("#movieResultsTitle").should("have.text", 'Results for "Cat"')
+    cy.get("#movieResultsSummary").should("contain", "1,880 results").and("contain", "Showing 9")
+    cy.get("#movieBox").should(($grid) => {
+      expect(getComputedStyle($grid[0]).gridTemplateColumns.split(" ")).to.have.length(3)
+    })
+    cy.get(".movie-card").should("have.length", 9).each(($card) => {
+      expect(getComputedStyle($card[0]).borderTopStyle).to.equal("dotted")
+    })
+    cy.get(".movie-card").should("contain", "Cat Movie 9").and("not.contain", "Cat Movie 10")
   })
 
   it("explains when a movie search has no results", () => {
@@ -213,6 +244,8 @@ describe("Movies and Pokemon", () => {
     cy.get("#movieForm").submit()
 
     cy.get("#movieStatus").should("contain", 'No movies found for "No Such Movie".').and("contain", "Try another title or release year.")
+    cy.get("#movieResultsTitle").should("have.text", 'No results for "No Such Movie"')
+    cy.get(".movie-card").should("not.exist")
   })
 
   it("shows a retry message when an OMDb request fails", () => {
@@ -223,5 +256,6 @@ describe("Movies and Pokemon", () => {
     cy.get("#movieForm").submit()
 
     cy.get("#movieStatus").should("have.text", "Unable to load movies. Please try again.")
+    cy.get("#movieResultsTitle").should("have.text", "Results unavailable")
   })
 })

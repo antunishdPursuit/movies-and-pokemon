@@ -27,15 +27,6 @@ footer {
         color: #060918;
         background: #ffffff;
     }
-    div > .movieBoxes {
-        padding: 1px;
-    
-    }
-    .poster {
-        height: 200px;
-        width: 150px;
-        padding: 0;
-    }
     a:link {
         color: inherit;
         text-decoration: none;
@@ -200,8 +191,127 @@ body{
     background: linear-gradient(20deg, white, #F3E4A2);
 }
 #movieBox {
+    min-height: 14rem;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 1rem;
     background: linear-gradient(90deg, white, #D8AD72);
 }
+
+.movie-results {
+    min-width: 0;
+}
+
+.movie-results-header {
+    padding: 0.75rem 1rem;
+    border: 2px solid #060918;
+    border-bottom: 0;
+    background: rgb(243 228 162 / 92%);
+}
+
+.movie-results-header h2,
+.movie-results-header p {
+    margin: 0;
+}
+
+.movie-results-header h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.movie-results-header p {
+    margin-top: 0.2rem;
+    color: rgb(6 9 24 / 72%);
+}
+
+.movie-card {
+    min-width: 0;
+    height: 100%;
+    padding: 0.75rem;
+    display: grid;
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    gap: 0.55rem;
+    border: 3px dotted #060918;
+    background: rgb(255 255 255 / 82%);
+}
+
+.movie-poster-frame {
+    min-height: 15rem;
+    display: grid;
+    place-items: center;
+}
+
+.movie-poster,
+.movie-poster-placeholder {
+    width: min(100%, 10rem);
+    aspect-ratio: 2 / 3;
+}
+
+.movie-poster {
+    height: auto;
+    object-fit: cover;
+}
+
+.movie-poster-placeholder {
+    padding: 1rem;
+    display: grid;
+    place-items: center;
+    border: 2px solid #8A9AAE;
+    color: rgb(6 9 24 / 72%);
+    background: #EEEEF0;
+    text-align: center;
+}
+
+.movie-card h3,
+.movie-card-year {
+    margin: 0;
+}
+
+.movie-card h3 {
+    font-size: 1.05rem;
+    line-height: 1.25;
+}
+
+.movie-card-year {
+    color: rgb(6 9 24 / 72%);
+    font-weight: 700;
+}
+
+@media (max-width: 64rem) {
+    #movieBox {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 48rem) {
+    .movie-layout {
+        margin-right: 0;
+        margin-left: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    #leftSideBox {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .movie-results {
+        padding-right: 0;
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 36rem) {
+    #movieBox {
+        grid-template-columns: 1fr;
+    }
+}
+
 #movieFooterBackground {
     background: linear-gradient(135deg, white, #F3E4A2);
 }
