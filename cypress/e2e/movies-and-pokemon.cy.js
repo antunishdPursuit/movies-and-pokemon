@@ -161,28 +161,58 @@ describe("Movies and Pokemon", () => {
   })
 
   it("renders OMDb text as text and reports a successful search", () => {
-    cy.intercept("GET", "https://www.omdbapi.com/**", {
-      Response: "True",
-      totalResults: "1",
-      Search: [
-        {
-          Title: "<img src=x onerror=alert(1)>",
-          Type: "movie",
-          Year: "2026",
-          imdbID: "tt1234567",
-          Poster: "N/A"
+    cy.intercept("GET", "https://www.omdbapi.com/**", (request) => {
+      expect(request.query.s).to.equal("Spider-Man")
+      expect(request.query.y).to.equal("2002")
+      expect(request.query.type).to.equal("movie")
+      request.reply({
+        delay: 250,
+        body: {
+          Response: "True",
+          totalResults: "1",
+          Search: [
+            {
+              Title: "<img src=x onerror=alert(1)>",
+              Type: "movie",
+              Year: "2026",
+              imdbID: "tt1234567",
+              Poster: "N/A"
+            }
+          ]
         }
-      ]
-    })
+      })
+    }).as("movieSearch")
     cy.visit("/about.html")
 
-    cy.get("#movie").type("Batman")
+    cy.get("#leftSideBox").should("have.css", "border-top-style", "dotted")
+    cy.get("#movieStatus").should("have.text", "Enter a movie title to begin.")
+    cy.get("#movie").type("Spider-Man")
+    cy.get("#movieYear").type("2002")
     cy.get("#movieForm").submit()
 
-    cy.get("#movieStatus").should("contain", "Total Movies: 1")
+    cy.get("#movieSubmt").should("have.text", "Searching...").and("be.disabled")
+    cy.get("#movieStatus").should("contain", 'Searching for "Spider-Man"...')
+    cy.wait("@movieSearch")
+    cy.get("#movieStatus").should("contain", '1 result found for "Spider-Man".')
+    cy.get("#movie").should("have.value", "Spider-Man")
+    cy.get("#movieYear").should("have.value", "2002")
+    cy.get("#movieSubmt").should("have.text", "Search movies").and("be.enabled")
     cy.get(".movieBoxes").should("have.length", 1)
     cy.get(".movieBoxes p").first().should("contain.text", "<img src=x onerror=alert(1)>")
     cy.get(".movieBoxes img").should("have.length", 1)
+  })
+
+  it("explains when a movie search has no results", () => {
+    cy.intercept("GET", "https://www.omdbapi.com/**", {
+      Response: "False",
+      Error: "Movie not found!"
+    })
+    cy.visit("/about.html")
+
+    cy.get("#movie").type("No Such Movie")
+    cy.get("#movieForm").submit()
+
+    cy.get("#movieStatus").should("contain", 'No movies found for "No Such Movie".').and("contain", "Try another title or release year.")
   })
 
   it("shows a retry message when an OMDb request fails", () => {

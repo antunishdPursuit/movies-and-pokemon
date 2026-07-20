@@ -28,17 +28,21 @@
     <main class="container movie-main">
         <h1 class="movie-page-title">Find a movie to watch</h1>
         <div class="row">
-            <aside class="col-md-3" id="leftSideBox">
-                <form id="movieForm">
-                        <h4 class="marginBottom" id="movieStatus" role="status" aria-live="polite">Movie Search</h4>
-                        <button class="marginBottom" id = "movieSubmt" type="submit">Movie Search</button>
-                        <label class="marginBottom" for="movie">Movie title</label>
-                        <input required class="marginBottom" id="movie" type="search" placeholder="Type Movie...">
-                  </form>
-                  <p>
-                    Requires one input: a word to search for a Movie(No symbols and more than 3 characters)<br>
-                     A list of movies will be displayed to the right displaying the top 10 movies that begins with the word inputted then movies tha have the word within in it.
-                  </p>
+            <aside class="col-md-3 movie-search-panel" id="leftSideBox" aria-labelledby="movie-search-title">
+                <h2 id="movie-search-title">Movie Search</h2>
+                <form class="movie-search-form" id="movieForm">
+                    <div class="movie-field">
+                        <label for="movie">Movie title</label>
+                        <input required id="movie" name="movie" type="search" placeholder="e.g., The Matrix" aria-describedby="movieSearchHelp">
+                    </div>
+                    <div class="movie-field">
+                        <label for="movieYear">Release year <span>(optional)</span></label>
+                        <input id="movieYear" name="movieYear" type="number" min="1888" max="2100" placeholder="e.g., 1999">
+                    </div>
+                    <button id="movieSubmt" type="submit">Search movies</button>
+                </form>
+                <p class="movie-search-help" id="movieSearchHelp">Spaces and punctuation are allowed.</p>
+                <p class="movie-search-status" id="movieStatus" role="status" aria-live="polite">Enter a movie title to begin.</p>
             </aside>
             <aside class="col">
                 <div class="row" id="movieBox">

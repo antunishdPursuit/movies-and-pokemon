@@ -17,17 +17,15 @@ footer {
     border: 2px solid gainsboro;
 }
 
-    #movie {
-        border-radius: 25px;
-        border: 1px solid;
-        padding: 10px; 
+    #movie,
+    #movieYear {
+        min-height: 2.75rem;
         width: 100%;
-        height: 5px;  
-    }
-    
-    #leftSideBox {
-        margin-right: 20px;
-        border: 3px dotted #060918;
+        padding: 0.65rem 0.85rem;
+        border: 2px solid #060918;
+        border-radius: 999px;
+        color: #060918;
+        background: #ffffff;
     }
     div > .movieBoxes {
         padding: 1px;
@@ -116,10 +114,6 @@ img {
     width: 100px
 }
 
-.marginBottom{
-    margin-bottom: 15px;
-}
-
 .pokeballs {
     margin-top: 100px;
     margin-bottom: 10px;
@@ -131,8 +125,72 @@ body{
 
 }
 #leftSideBox{
+    align-self: flex-start;
+    margin-right: 20px;
+    padding: 1rem;
+    border: 3px dotted #060918;
     background-size: 200px;
     background-color: #EEEEF0;
+}
+
+.movie-search-panel h2 {
+    margin: 0 0 1rem;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.movie-search-form,
+.movie-field {
+    display: grid;
+}
+
+.movie-search-form {
+    gap: 0.9rem;
+}
+
+.movie-field {
+    gap: 0.35rem;
+}
+
+.movie-field label {
+    font-weight: 800;
+}
+
+.movie-field label span,
+.movie-search-help {
+    font-weight: 400;
+    color: rgb(6 9 24 / 72%);
+}
+
+#movieSubmt {
+    min-height: 2.75rem;
+    padding: 0.55rem 1rem;
+    border: 2px solid #060918;
+    border-radius: 999px;
+    color: #F3E4A2;
+    background: #060918;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#movieSubmt:disabled {
+    cursor: wait;
+    opacity: 0.68;
+}
+
+.movie-search-help {
+    margin: 0.9rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.movie-search-status {
+    min-height: 3.5rem;
+    margin: 0.75rem 0 0;
+    padding: 0.65rem 0.75rem;
+    border-left: 4px solid #706993;
+    background: rgb(255 255 255 / 78%);
+    line-height: 1.4;
 }
 
 #movieBackground {

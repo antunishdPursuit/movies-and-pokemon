@@ -1,17 +1,17 @@
 let movieForm = document.querySelector("#movieForm")
-let error = document.querySelector("#movieStatus")
+let movieStatus = document.querySelector("#movieStatus")
 let movieBox = document.querySelector("#movieBox")
 let movieSubmitButton = document.querySelector("#movieSubmt")
 let count = 0
 
 // Build status and API text as DOM nodes so response values are never parsed as HTML.
 function setStatusLines(...lines) {
-    error.replaceChildren()
+    movieStatus.replaceChildren()
     lines.forEach((line, index) => {
         if (index > 0) {
-            error.append(document.createElement("br"))
+            movieStatus.append(document.createElement("br"))
         }
-        error.append(document.createTextNode(line))
+        movieStatus.append(document.createTextNode(line))
     })
 }
 function createMovieField(label, value) {
@@ -24,21 +24,35 @@ function createMovieField(label, value) {
 
 function setLoading(isLoading) {
     movieSubmitButton.disabled = isLoading
-    movieSubmitButton.textContent = isLoading ? "Searching..." : "Movie Search"
+    movieSubmitButton.textContent = isLoading ? "Searching..." : "Search movies"
+    movieForm.setAttribute("aria-busy", String(isLoading))
 }
 
 window.onload = () => {
   movieForm.addEventListener("submit", (event) => {
-    count++
         event.preventDefault()
-        let movieType = event.target.movie.value.toLowerCase()
-        const symbols = /[^\w]/g
-        if(movieType.split(" ")[0].length < 3 || movieType.split(" ")[0].search(symbols) >= 0){
-            setStatusLines("More than 3 Letters", "And no symbols")
-        } else {
-            error.textContent = "Movie Search"
-            setLoading(true)
-        fetch(`https://www.omdbapi.com/?apikey=5e8cd208&s=${movieType}`)
+        let movieTitle = event.target.movie.value.trim()
+        let releaseYear = event.target.movieYear.value.trim()
+
+        if (!movieTitle) {
+            setStatusLines("Enter a movie title to search.")
+            return
+        }
+
+        count++
+        setStatusLines(`Searching for "${movieTitle}"...`)
+        setLoading(true)
+
+        let apiParameters = new URLSearchParams({
+            apikey: "5e8cd208",
+            s: movieTitle,
+            type: "movie"
+        })
+        if (releaseYear) {
+            apiParameters.set("y", releaseYear)
+        }
+
+        fetch(`https://www.omdbapi.com/?${apiParameters}`)
         .then((response) => response.json())
         .then((json) => {
             let searchResults = json.Search
@@ -51,13 +65,17 @@ window.onload = () => {
                 }
             }
             if(searchResults === undefined || json.Response === "False"){
-            error.textContent = "No Search Results, Please Try again"
+            setStatusLines(`No movies found for "${movieTitle}".`, "Try another title or release year.")
             } else {
-            setStatusLines(`Total Movies: ${json.totalResults}`, "Only displaying the top 10")
+            let formattedTotal = Number(json.totalResults).toLocaleString()
+            let resultLabel = Number(json.totalResults) === 1 ? "result" : "results"
+            let pageResultLabel = searchResults.length === 1 ? "result" : "results"
+            setStatusLines(`${formattedTotal} ${resultLabel} found for "${movieTitle}".`, `Showing ${searchResults.length} ${pageResultLabel} on this page.`)
+                let normalizedQuery = movieTitle.toLowerCase()
                 for (let index = 0; index < searchResults.length; index++) {
                     const element = searchResults[index];
                     let lowerCased = element.Title.toLowerCase()
-                    if(lowerCased.indexOf(movieType) === 0){
+                    if(lowerCased.indexOf(normalizedQuery) === 0){
                         let movieSearched = document.createElement("div")
                         movieSearched.classList.add("col-md-4")
                         movieSearched.classList.add("col-sm-4")
@@ -83,7 +101,7 @@ window.onload = () => {
                 for (let index = 0; index < searchResults.length; index++) {
                     const element = searchResults[index];
                     let lowerCased = element.Title.toLowerCase()
-                    if(lowerCased.indexOf(movieType) !== 0){
+                    if(lowerCased.indexOf(normalizedQuery) !== 0){
                         let movieSearched = document.createElement("div")
                         movieSearched.classList.add("col-md-4")
                         movieSearched.classList.add("col-sm-4")
@@ -110,11 +128,8 @@ window.onload = () => {
 
         })
         .catch(() => {
-            error.textContent = "Unable to load movies. Please try again."
+            movieStatus.textContent = "Unable to load movies. Please try again."
         })
         .finally(() => setLoading(false))
-        }
-        event.target.movie.value = ""
-
     })
 }
