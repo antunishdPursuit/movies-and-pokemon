@@ -226,13 +226,15 @@ body{
 }
 
 .pokemon-main {
-    width: min(96rem, calc(100% - 2rem));
+    width: min(88rem, calc(100% - 2rem));
     margin: 0 auto;
     padding: 0.75rem 0;
     display: grid;
-    grid-template-columns: minmax(13rem, 0.23fr) minmax(0, 0.77fr);
+    grid-template-columns: minmax(20rem, 22rem) minmax(0, 65rem);
     gap: 1rem;
     align-items: start;
+    align-content: center;
+    justify-content: center;
 }
 
 .pokemon-intro {
@@ -512,7 +514,7 @@ body{
 }
 
 .battle-control:disabled {
-    cursor: not-allowed;
+    cursor: default;
     opacity: 0.68;
 }
 
@@ -603,9 +605,10 @@ body{
     outline-offset: 3px;
 }
 
-@media (max-width: 74rem) {
+@media (max-width: 80rem) {
     .pokemon-main {
         grid-template-columns: 1fr;
+        align-content: start;
     }
 
     .pokemon-intro h1 {

@@ -36,6 +36,12 @@ let battleInProgress = false
 let matchOver = false
 let roundReady = false
 
+// Preload swapped battle art so fallback text does not flash during a round result.
+;[defeatImage, leftImage, rightImage].forEach((source) => {
+  let image = new Image()
+  image.src = source
+})
+
 // PokeAPI failures should leave the page recoverable instead of blocking a new match.
 function loadPokemon(id, image, sprite = "front_default") {
   fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
@@ -137,8 +143,11 @@ function startBattle(playerName) {
   resetButton.hidden = true
 
   playerBattlePokemon.src = clearBackground
+  playerBattlePokemon.alt = ""
   battleResult.src = fightImage
+  battleResult.alt = "Fight"
   opponentBattlePokemon.src = clearBackground
+  opponentBattlePokemon.alt = ""
   battleControl.disabled = true
   resetPokemonCycle()
 
@@ -177,8 +186,11 @@ function selectTeamPokemon(event) {
   opponent.dataset.teamState = "used"
 
   playerBattlePokemon.src = teamChoice.querySelector(".playerPokemon").src
+  playerBattlePokemon.alt = "Player's selected Pokemon"
   opponentBattlePokemon.src = opponent.src
+  opponentBattlePokemon.alt = "Opponent's selected Pokemon"
   battleResult.src = fightImage
+  battleResult.alt = "Fight"
   roundReady = true
   battleControl.disabled = false
   setRoundStatus("Hover over or select Fight to resolve this round.")
@@ -244,8 +256,11 @@ function resetMatch() {
     choice.querySelector("img").alt = ""
   })
   playerBattlePokemon.src = clearBackground
+  playerBattlePokemon.alt = ""
   battleResult.src = fightImage
+  battleResult.alt = "Fight"
   opponentBattlePokemon.src = clearBackground
+  opponentBattlePokemon.alt = ""
   opponentPortrait.src = clearBackground
   battleControl.disabled = true
   resetPokemonCycle(false)
@@ -268,11 +283,15 @@ function resolveBattle() {
   if (playerWon) {
     playerBattleScore++
     battleResult.src = rightImage
+    battleResult.alt = ""
     opponentBattlePokemon.src = defeatImage
+    opponentBattlePokemon.alt = ""
   } else {
     opponentBattleScore++
     battleResult.src = leftImage
+    battleResult.alt = ""
     playerBattlePokemon.src = defeatImage
+    playerBattlePokemon.alt = ""
   }
 
   if (playerBattleScore === 6) {
