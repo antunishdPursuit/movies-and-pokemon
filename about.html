@@ -4,7 +4,8 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Portfolio Project</title>
+        <title>Movies and Pokemon</title>
+        <meta name="description" content="Search movies with the OMDb API in this vanilla JavaScript playground.">
         <link rel="stylesheet" href="style.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
@@ -32,9 +33,10 @@
         <div class="row">
             <aside class="col-md-3" id="leftSideBox">
                 <form id="movieForm">
-                        <h4 class="marginBottom">Movie Search</h4> 
+                        <h4 class="marginBottom" id="movieStatus" role="status" aria-live="polite">Movie Search</h4>
                         <button class="marginBottom" id = "movieSubmt" type="submit">Movie Search</button>
-                        <input required class="marginBottom" id="movie" type="data" placeholder="Type Movie...">
+                        <label class="marginBottom" for="movie">Movie title</label>
+                        <input required class="marginBottom" id="movie" type="search" placeholder="Type Movie...">
                   </form>
                   <p>
                     Requires one input: a word to search for a Movie(No symbols and more than 3 characters)<br>
@@ -64,7 +66,7 @@
                 </div>
             </div>
     </footer>
-    <script defer src="movie.js"></script>
+    <script type="module" src="movie.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -1,0 +1,25 @@
+{
+  "name": "movies-and-pokemon",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A vanilla JavaScript playground with a Pokemon battle and OMDb movie search.",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 4173 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "start-server-and-test dev http://127.0.0.1:4173 test:e2e",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "allowScripts": {
+    "cypress": true
+  },
+  "devDependencies": {
+    "cypress": "^15.18.1",
+    "start-server-and-test": "^3.0.11",
+    "vite": "^8.1.5"
+  }
+}

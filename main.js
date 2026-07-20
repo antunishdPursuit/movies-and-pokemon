@@ -1,287 +1,155 @@
-// Starting pokemon that will appear in the upper left side 
-let pokeArr = ["gardevoir","lopunny","primarina"]
-//pokemon in the header tag
+import clearBackground from "./clearBackground.png"
+import defeatImage from "./defeat.gif"
+import fightImage from "./fight.gif"
+import leftImage from "./left.png"
+import pokeballImage from "./pokeball.png"
+import rightImage from "./right.png"
+
+let pokeArr = ["gardevoir", "lopunny", "primarina"]
 let randomPokemon = document.getElementById("randomPokemon")
-let randomShinyPokemon = document.getElementById("randomShinyPokemon")
-// array pf pokemon that will appear on the left and right side of the page 
-let starterPokemonsters = [3,6,9,12,15,18]
+let starterPokemonsters = [3, 6, 9, 12, 15, 18]
 let playerPokemons = document.querySelectorAll(".playerPokemon")
+let playerChoices = document.querySelectorAll(".pokemon-choice")
 let trainerPokemons = document.querySelectorAll(".trainerPokemon")
-// Adding click event listner to each pokeball
+let starterPokeballs = document.querySelectorAll(".pokeball")
 let gardevoir = document.querySelector("#gardevoir")
 let lopunny = document.querySelector("#lopunny")
 let primarina = document.querySelector("#primarina")
-// selectng the row where all the pokeball containers are in
 let pokeballContainer = document.querySelector("#pokeballContainer")
-// Empty array for seven random id numbers for poekmon
-let randomSevenNumbers =[]
-let count = 0
-let countTwo = 0
-// changing the text below the pokemon
 let changeText = document.getElementById("changeText")
-// Text after click 
-let player = 0
-let enemy = 0
-// Wait for the webpage to load
-window.onload = () => {
-  const random = (id) => {
-    fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
+let resetButton = document.getElementById("resetGame")
+
+let playerScore = 0
+let enemyScore = 0
+let gameStarted = false
+let gameOver = false
+let roundReady = false
+let selectedStarter = ""
+
+// PokeAPI failures should leave the page recoverable instead of blocking a new game.
+function loadPokemon(id, image, sprite = "front_default") {
+  fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
     .then((response) => response.json())
     .then((json) => {
-      let pokeShiny = json.sprites.front_shiny
-      randomPokemon.src = `${pokeShiny}`
+      image.src = json.sprites[sprite]
     })
-    .catch((error) => {
-      // You can do what you like with the error here.
-      console.log(error);
-    });
-  }
-  // Array of seven random id numbers for poekmon
-  for (let index = 0; index < 7; index++) {
-    let randomPokemonId = Math.ceil(Math.random() * 1010)
-    randomSevenNumbers.push(randomPokemonId)
-  }
-  // each pokeball has an event listener 
-gardevoir.addEventListener("click",(event) => {
-  count++
-  if (count <= 1){
-  // the pokeball images are centered in the middle and then will will be spearted after a click 
-  pokeballContainer.classList.remove("justify-content-center")
-  pokeballContainer.classList.add("justify-content-between")
-  // the pokeballs get a tranpaernat background
-  gardevoir.src = "clearBackground.png"
-  lopunny.src = "fight.gif"
-  primarina.src = "clearBackground.png"
-  // the upper right pokemon will get the approiate pokemon 
-  random(pokeArr[0]) 
-  // Right side: of the webpage has 1 random rival trainer and 6 random pokemons
-  for (let index = 0; index < randomSevenNumbers.length; index++) {
-    const element = randomSevenNumbers[index];
-    let trainPoke = trainerPokemons[index]
-    fetch(`https://pokeapi.co/api/v2/pokemon/${element}/`)
-    .then((response) => response.json())
-    .then((json) => {
-      let poke = json.sprites.front_default
-      trainPoke.src = `${poke}`
-
+    .catch(() => {
+      changeText.textContent = "Unable to load Pokemon. Please try starting a new game."
     })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-  // Left Side: Six predefined pokemon which will be used by the trainer pokemon
-  for (let index = 0; index < starterPokemonsters.length; index++) {
-    const element = starterPokemonsters[index];
-    let trainPoke = playerPokemons[index]
-    fetch(`https://pokeapi.co/api/v2/pokemon/${element}/`)
-    .then((response) => response.json())
-    .then((json) => {
-      let poke = json.sprites.front_default
-      trainPoke.src = `${poke}`
-
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-  // changing the trainerPokemon HTML collection to an array
-  let arrOfTrainerPokemon = Array.prototype.slice.call(trainerPokemons)
-  let sixPokemon = arrOfTrainerPokemon.slice(1)
-  // Each pokemon on the left has a click event listner 
-  for (let index = 0; index < playerPokemons.length; index++) {
-      const element = playerPokemons[index];
-      element.addEventListener("click", (event) => {
-        countTwo = 0
-      let pokeRandomNumber = Math.floor(Math.random() * 6)
-      gardevoir.src = event.target.src
-      primarina.src = sixPokemon[pokeRandomNumber].src
-      //Added mouseover event lisnter to simulate a pokemon battle
-      lopunny.src = "fight.gif"
-      lopunny.addEventListener("mouseover", event => {
-          countTwo++
-        let flip = Math.ceil(Math.random() *2)
-        if(countTwo <= 1){
-          flip === 1 ? player++ : enemy++
-          changeText.innerHTML =  `Player:${enemy} Vs Enemy: ${player} => Win Condition: First to six! <br><strong>Instructions:</strong> <br> Now we will showcase the mouseover event listner. <br> After clicking on one of the pokemon on the left side, the chosen pokemon will move to the middle as well as a random pokemon from the right side.  <br> Move your mouse over the fight gif and it will show you who won the pokemon battle. <br> Click on another pokemon from the left to have another pokemon battle`
-          if (flip === 1){
-            lopunny.src = "right.png"
-            gardevoir.src = "defeat.gif"
-          } else {
-            lopunny.src = "left.png"
-            primarina.src = "defeat.gif"
-          }
-        }
-        
-      })
-    })
-  }
-  // Change the text below pokeballs
-  changeText.innerHTML = `Player: 0 Vs Enemy: 0 <br><strong>Instructions:</strong> <br> Now we will showcase the mouseover event listner. <br> After clicking on one of the pokemon on the left side, the chosen pokemon will move to the middle as well as a random pokemon from the right side.  <br> Move your mouse over the fight gif and it will show you who won the pokemon battle. <br> Click on another pokemon from the left to have another pokemon battle`
-  }
-})
-lopunny.addEventListener("click",(event) => {
-  count++
-  if (count <= 1){
-  // the pokeball images are centered in the middle and then will will be spearted after a click 
-  pokeballContainer.classList.remove("justify-content-center")
-  pokeballContainer.classList.add("justify-content-between")
-  // the pokeballs get a tranpaernat background
-  gardevoir.src = "clearBackground.png"
-  lopunny.src = "fight.gif"
-  primarina.src = "clearBackground.png"
-  // the upper right pokemon will get the approiate pokemon 
-  random(pokeArr[1]) 
-  // Right side: of the webpage has 1 random rival trainer and 6 random pokemons
-  for (let index = 0; index < randomSevenNumbers.length; index++) {
-    const element = randomSevenNumbers[index];
-    let trainPoke = trainerPokemons[index]
-    fetch(`https://pokeapi.co/api/v2/pokemon/${element}/`)
-    .then((response) => response.json())
-    .then((json) => {
-      let poke = json.sprites.front_default
-      trainPoke.src = `${poke}`
-
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-  // Left Side: Six predefined pokemon which will be used by the trainer pokemon
-  for (let index = 0; index < starterPokemonsters.length; index++) {
-    const element = starterPokemonsters[index];
-    let trainPoke = playerPokemons[index]
-    fetch(`https://pokeapi.co/api/v2/pokemon/${element}/`)
-    .then((response) => response.json())
-    .then((json) => {
-      let poke = json.sprites.front_default
-      trainPoke.src = `${poke}`
-
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-  // changing the trainerPokemon HTML collection to an array
-  let arrOfTrainerPokemon = Array.prototype.slice.call(trainerPokemons)
-  let sixPokemon = arrOfTrainerPokemon.slice(1)
-  // Each pokemon on the left has a click event listner 
-  for (let index = 0; index < playerPokemons.length; index++) {
-      const element = playerPokemons[index];
-      element.addEventListener("click", (event) => {
-        countTwo = 0
-      let pokeRandomNumber = Math.floor(Math.random() * 6)
-      gardevoir.src = event.target.src
-      primarina.src = sixPokemon[pokeRandomNumber].src
-        //Added mouseover event lisnter to simulate a pokemon battle     
-        lopunny.src = "fight.gif"
-        lopunny.addEventListener("mouseover", event => {
-            countTwo++
-          let flip = Math.ceil(Math.random() *2)
-          if(countTwo <= 1){
-            flip === 1 ? player++ : enemy++
-            changeText.innerHTML =  `Player:${enemy} Vs Enemy: ${player} => Win Condition: First to six! <br><strong>Instructions:</strong> <br> Now we will showcase the mouseover event listner. <br> After clicking on one of the pokemon on the left side, the chosen pokemon will move to the middle as well as a random pokemon from the right side.  <br> Move your mouse over the fight gif and it will show you who won the pokemon battle. <br> Click on another pokemon from the left to have another pokemon battle`
-            if (flip === 1){
-              lopunny.src = "right.png"
-              gardevoir.src = "defeat.gif"
-            } else {
-              lopunny.src = "left.png"
-              primarina.src = "defeat.gif"
-            }
-          }
-          
-        })
-
-    })
-  }
-    // Change the text below pokeballs
-    changeText.innerHTML = `Player: 0 Vs Enemy: 0 <br><strong>Instructions:</strong> <br> Now we will showcase the mouseover event listner. <br> After clicking on one of the pokemon on the left side, the chosen pokemon will move to the middle as well as a random pokemon from the right side.  <br> Move your mouse over the fight gif and it will show you who won the pokemon battle. <br> Click on another pokemon from the left to have another pokemon battle`
-  }
-
-})
-
-
-
-primarina.addEventListener("click",(event) => {
-  count++
-  if (count <= 1){
-  // the pokeball images are centered in the middle and then will will be spearted after a click 
-  pokeballContainer.classList.remove("justify-content-center")
-  pokeballContainer.classList.add("justify-content-between")
-  // the pokeballs get a tranpaernat background
-  gardevoir.src = "clearBackground.png"
-  lopunny.src = "fight.gif"
-  primarina.src = "clearBackground.png"
-  // the upper right pokemon will get the approiate pokemon 
-  random(pokeArr[2]) 
-  // Right side: of the webpage has 1 random rival trainer and 6 random pokemons
-  for (let index = 0; index < randomSevenNumbers.length; index++) {
-    const element = randomSevenNumbers[index];
-    let trainPoke = trainerPokemons[index]
-    fetch(`https://pokeapi.co/api/v2/pokemon/${element}/`)
-    .then((response) => response.json())
-    .then((json) => {
-      let poke = json.sprites.front_default
-      trainPoke.src = `${poke}`
-
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-  // Left Side: Six predefined pokemon which will be used by the trainer pokemon
-  for (let index = 0; index < starterPokemonsters.length; index++) {
-    const element = starterPokemonsters[index];
-    let trainPoke = playerPokemons[index]
-    fetch(`https://pokeapi.co/api/v2/pokemon/${element}/`)
-    .then((response) => response.json())
-    .then((json) => {
-      let poke = json.sprites.front_default
-      trainPoke.src = `${poke}`
-
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-  // changing the trainerPokemon HTML collection to an array
-  let arrOfTrainerPokemon = Array.prototype.slice.call(trainerPokemons)
-  let sixPokemon = arrOfTrainerPokemon.slice(1)
-  // Each pokemon on the left has a click event listner 
-  for (let index = 0; index < playerPokemons.length; index++) {
-      const element = playerPokemons[index];
-      element.addEventListener("click", (event) => {
-        countTwo = 0
-        // changeText.innerHTML = textAfterClick
-        let pokeRandomNumber = Math.floor(Math.random() * 6)
-        gardevoir.src = event.target.src
-        primarina.src = sixPokemon[pokeRandomNumber].src
-        //Added mouseover event lisnter to simulate a pokemon battle
-        lopunny.src = "fight.gif"
-        lopunny.addEventListener("mouseover", event => {
-            countTwo++
-          let flip = Math.ceil(Math.random() *2)
-          if(countTwo <= 1){
-            flip === 1 ? player++ : enemy++
-            changeText.innerHTML =  `Player:${enemy} Vs Enemy: ${player} => Win Condition: First to six! <br><strong>Instructions:</strong> <br> Now we will showcase the mouseover event listner. <br> After clicking on one of the pokemon on the left side, the chosen pokemon will move to the middle as well as a random pokemon from the right side.  <br> Move your mouse over the fight gif and it will show you who won the pokemon battle. <br> Click on another pokemon from the left to have another pokemon battle`
-            if (flip === 1){
-              lopunny.src = "right.png"
-              gardevoir.src = "defeat.gif"
-            } else {
-              lopunny.src = "left.png"
-              primarina.src = "defeat.gif"
-            }
-          }
-          
-        })
-    })
-  }
-    // Change the text below pokeballs
-    changeText.innerHTML =  `Player: 0 Vs Enemy: 0 <br><strong>Instructions:</strong> <br> Now we will showcase the mouseover event listner. <br> After clicking on one of the pokemon on the left side, the chosen pokemon will move to the middle as well as a random pokemon from the right side.  <br> Move your mouse over the fight gif and it will show you who won the pokemon battle. <br> Click on another pokemon from the left to have another pokemon battle`
-  }
-})
-
 }
 
+function updateBattleText(result = "") {
+  changeText.replaceChildren()
+  changeText.append(document.createTextNode(`Player: ${playerScore} Vs Enemy: ${enemyScore} => Win Condition: First to six!`))
+  changeText.append(document.createElement("br"))
 
+  let instructions = document.createElement("strong")
+  instructions.textContent = "Instructions:"
+  changeText.append(instructions, document.createElement("br"))
+  changeText.append(document.createTextNode("Now we will showcase the mouseover event listner."), document.createElement("br"))
+  changeText.append(document.createTextNode("After clicking on one of the pokemon on the left side, the chosen pokemon will move to the middle as well as a random pokemon from the right side."), document.createElement("br"))
+  changeText.append(document.createTextNode("Move your mouse over the fight gif and it will show you who won the pokemon battle."), document.createElement("br"))
+  changeText.append(document.createTextNode("Click on another pokemon from the left to have another pokemon battle."))
 
+  if (result) {
+    changeText.append(document.createElement("br"), document.createTextNode(result))
+  }
+}
 
+// A finished game restores real start controls instead of leaving hidden restart targets in battle artwork.
+function resetStarterPokeballs() {
+  starterPokeballs.forEach((pokeball) => {
+    pokeball.querySelector("img").src = pokeballImage
+  })
+  pokeballContainer.classList.remove("justify-content-between")
+  pokeballContainer.classList.add("justify-content-center")
+}
+
+function startGame(starterName) {
+  playerScore = 0
+  enemyScore = 0
+  gameStarted = true
+  gameOver = false
+  roundReady = false
+  selectedStarter = starterName
+  resetButton.hidden = true
+
+  pokeballContainer.classList.remove("justify-content-center")
+  pokeballContainer.classList.add("justify-content-between")
+  gardevoir.src = clearBackground
+  lopunny.src = fightImage
+  primarina.src = clearBackground
+
+  loadPokemon(starterName, randomPokemon, "front_shiny")
+
+  let randomSevenNumbers = Array.from({ length: 7 }, () => Math.ceil(Math.random() * 1010))
+  trainerPokemons.forEach((pokemon, index) => loadPokemon(randomSevenNumbers[index], pokemon))
+  playerPokemons.forEach((pokemon, index) => loadPokemon(starterPokemonsters[index], pokemon))
+
+  updateBattleText()
+}
+
+function selectPlayerPokemon(event) {
+  if (!gameStarted || gameOver) {
+    return
+  }
+
+  let opponentTeam = Array.from(trainerPokemons).slice(1)
+  let opponent = opponentTeam[Math.floor(Math.random() * opponentTeam.length)]
+
+  gardevoir.src = event.currentTarget.querySelector(".playerPokemon").src
+  primarina.src = opponent.src
+  lopunny.src = fightImage
+  roundReady = true
+}
+
+function finishGame(winner) {
+  gameOver = true
+  roundReady = false
+  resetStarterPokeballs()
+  resetButton.hidden = false
+  updateBattleText(`${winner} wins the game! Click a Pokeball to start a new game.`)
+}
+
+function resetGame() {
+  if (selectedStarter) {
+    startGame(selectedStarter)
+  }
+}
+
+function resolveBattle() {
+  // Mouseover can fire repeatedly; a new player choice must be required for each score change.
+  if (!roundReady || gameOver) {
+    return
+  }
+
+  roundReady = false
+  let playerWon = Math.random() >= 0.5
+
+  if (playerWon) {
+    playerScore++
+    lopunny.src = rightImage
+    gardevoir.src = defeatImage
+  } else {
+    enemyScore++
+    lopunny.src = leftImage
+    primarina.src = defeatImage
+  }
+
+  if (playerScore === 6) {
+    finishGame("Player")
+  } else if (enemyScore === 6) {
+    finishGame("Enemy")
+  } else {
+    updateBattleText()
+  }
+}
+
+window.onload = () => {
+  starterPokeballs.forEach((pokeball, index) => {
+    pokeball.addEventListener("click", () => startGame(pokeArr[index]))
+  })
+  playerChoices.forEach((pokemon) => pokemon.addEventListener("click", selectPlayerPokemon))
+  lopunny.addEventListener("mouseover", resolveBattle)
+  resetButton.addEventListener("click", resetGame)
+}
