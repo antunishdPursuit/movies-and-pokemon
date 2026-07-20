@@ -230,7 +230,7 @@ body{
     margin: 0 auto;
     padding: 0.75rem 0;
     display: grid;
-    grid-template-columns: minmax(13rem, 0.28fr) minmax(0, 0.72fr);
+    grid-template-columns: minmax(13rem, 0.23fr) minmax(0, 0.77fr);
     gap: 1rem;
     align-items: start;
 }
@@ -277,6 +277,7 @@ body{
 }
 
 .pokemon-game {
+    --game-axis: 38%;
     display: grid;
     gap: 0.75rem;
 }
@@ -315,18 +316,19 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-right: calc(100% - var(--game-axis) - var(--game-axis));
     gap: 0.55rem;
 }
 
 .player-options[data-selection-state="battle"] {
     justify-content: flex-start;
-    padding-right: 50%;
+    padding-right: calc(100% - var(--game-axis));
 }
 
 .player-options[data-selection-state="battle"] .player-choice[data-player-state="active"] {
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: var(--game-axis);
     transform: translate(-50%, -50%);
 }
 
@@ -365,7 +367,7 @@ body{
 
 .battle-board {
     display: grid;
-    grid-template-columns: minmax(9rem, 0.8fr) minmax(17rem, 1.4fr) minmax(9rem, 0.8fr);
+    grid-template-columns: minmax(9rem, 0.55fr) minmax(17rem, 1.15fr) minmax(9rem, 1.3fr);
     gap: 0.75rem;
 }
 
@@ -521,7 +523,7 @@ body{
 
 .match-opponent-panel {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(10rem, 0.28fr);
+    grid-template-columns: minmax(0, 0.76fr) minmax(10rem, 0.24fr);
     background: linear-gradient(18deg, #ffffff, #F3E4A2);
 }
 
@@ -598,6 +600,18 @@ body{
 
     .pokemon-intro h1 {
         max-width: 18ch;
+    }
+
+    .pokemon-game {
+        --game-axis: 50%;
+    }
+
+    .battle-board {
+        grid-template-columns: minmax(9rem, 0.8fr) minmax(17rem, 1.4fr) minmax(9rem, 0.8fr);
+    }
+
+    .match-opponent-panel {
+        grid-template-columns: minmax(0, 1fr) minmax(10rem, 0.28fr);
     }
 }
 
