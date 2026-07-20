@@ -7,6 +7,63 @@ const pokemonResponse = {
 
 // Stub external APIs so these tests verify this project's UI and state behavior deterministically.
 describe("Movies and Pokemon", () => {
+  it("uses the shared site shell on both pages", () => {
+    const verifyShell = (activePage) => {
+      cy.get(".site-header-art").should("have.length", 2).each(($image) => {
+        expect($image[0].complete).to.equal(true)
+        expect($image[0].naturalWidth).to.be.greaterThan(0)
+        expect($image[0].alt).to.equal("")
+      })
+      cy.get(".site-header").then(($header) => {
+        const header = $header[0].getBoundingClientRect()
+        cy.get(".site-header-art").each(($image, index) => {
+          const image = $image[0].getBoundingClientRect()
+          expect(image.top).to.be.closeTo(header.top + 2, 1)
+          expect(image.bottom).to.be.closeTo(header.bottom - 2, 1)
+          if (index === 0) expect(image.left).to.be.closeTo(header.left + 2, 1)
+          if (index === 1) expect(image.right).to.be.closeTo(header.right - 2, 1)
+        })
+      })
+      cy.get(".site-brand").should("have.text", "Movies and Pokemon")
+      cy.get(".site-nav a").should("have.length", 2)
+      cy.get('.site-nav a[aria-current="page"]').should("have.text", activePage)
+      cy.get(".site-footer-art").should(($image) => {
+        expect($image[0].complete).to.equal(true)
+        expect($image[0].naturalWidth).to.be.greaterThan(0)
+        expect($image[0].alt).to.equal("")
+      })
+      cy.get(".site-footer").then(($footer) => {
+        const footer = $footer[0].getBoundingClientRect()
+        const image = $footer[0].querySelector(".site-footer-art").getBoundingClientRect()
+        expect(image.left).to.be.closeTo(footer.left + 2, 1)
+        expect(image.top).to.be.closeTo(footer.top + 2, 1)
+        expect(image.bottom).to.be.closeTo(footer.bottom - 2, 1)
+      })
+      cy.get(".site-footer").should("contain", "Movies and Pokemon").and("contain", "GitHub").and("contain", "LinkedIn")
+    }
+
+    cy.visit("/")
+    verifyShell("Pokemon Battle")
+
+    cy.visit("/about.html")
+    verifyShell("Movie Search")
+    cy.get("h1").should("have.text", "Find a movie to watch")
+  })
+
+  it("keeps the shared shell usable on a narrow screen", () => {
+    cy.viewport(375, 667)
+
+    ;["/", "/about.html"].forEach((path) => {
+      cy.visit(path)
+      cy.get(".site-header, .site-footer").each(($shell) => {
+        const shell = $shell[0].getBoundingClientRect()
+        expect(shell.left).to.be.at.least(0)
+        expect(shell.right).to.be.at.most(375)
+      })
+      cy.get(".site-nav a").should("be.visible")
+    })
+  })
+
   it("keeps the ready-to-fight content inside the desktop battle stage", () => {
     cy.viewport(1903, 959)
     cy.intercept("GET", "https://pokeapi.co/api/v2/pokemon/**", pokemonResponse)
@@ -121,28 +178,103 @@ describe("Movies and Pokemon", () => {
   })
 
   it("renders OMDb text as text and reports a successful search", () => {
+    cy.intercept("GET", "https://www.omdbapi.com/**", (request) => {
+      expect(request.query.s).to.equal("Spider-Man")
+      expect(request.query.y).to.equal("2002")
+      expect(request.query.type).to.equal("movie")
+      request.reply({
+        delay: 250,
+        body: {
+          Response: "True",
+          totalResults: "1",
+          Search: [
+            {
+              Title: "<img src=x onerror=alert(1)>",
+              Type: "movie",
+              Year: "2026",
+              imdbID: "tt1234567",
+              Poster: "N/A"
+            }
+          ]
+        }
+      })
+    }).as("movieSearch")
+    cy.visit("/about.html")
+
+    cy.get("#leftSideBox").should("have.css", "border-top-style", "dotted")
+    cy.get("#movieStatus").should("have.text", "Enter a movie title to begin.")
+    cy.get(".movie-results").should("not.be.visible")
+    cy.get("#movieResultsTitle").should("not.exist")
+    cy.get("#movie").type("Spider-Man")
+    cy.get("#movieYear").type("2002")
+    cy.get("#movieForm").submit()
+
+    cy.get("#movieSubmt").should("have.text", "Searching...").and("be.disabled")
+    cy.get("#movieStatus").should("contain", 'Searching for "Spider-Man"...')
+    cy.wait("@movieSearch")
+    cy.get("#movieStatus").should("contain", '1 result found for "Spider-Man".')
+    cy.get("#movie").should("have.value", "Spider-Man")
+    cy.get("#movieYear").should("have.value", "2002")
+    cy.get("#movieSubmt").should("have.text", "Search movies").and("be.enabled")
+    cy.get(".movie-card").should("have.length", 1)
+    cy.get(".movie-card h3").should("contain.text", "<img src=x onerror=alert(1)>")
+    cy.get(".movie-poster-placeholder").should("be.visible").and("contain", "Poster unavailable")
+    cy.get(".movie-card").should("not.contain", "ImdbID").and("not.contain", "Type")
+    cy.get(".movie-card-link")
+      .should("have.text", "View on IMDb")
+      .and("have.attr", "href", "https://www.imdb.com/title/tt1234567/")
+      .and("have.attr", "target", "_blank")
+      .and("have.attr", "rel", "noopener noreferrer")
+  })
+
+  it("shows nine movies in a three-column dotted grid", () => {
+    const movies = Array.from({ length: 10 }, (_, index) => ({
+      Title: `Cat Movie ${index + 1}`,
+      Type: "movie",
+      Year: String(2000 + index),
+      imdbID: `tt000000${index}`,
+      Poster: "N/A"
+    }))
     cy.intercept("GET", "https://www.omdbapi.com/**", {
       Response: "True",
-      totalResults: "1",
-      Search: [
-        {
-          Title: "<img src=x onerror=alert(1)>",
-          Type: "movie",
-          Year: "2026",
-          imdbID: "tt1234567",
-          Poster: "N/A"
-        }
-      ]
+      totalResults: "1880",
+      Search: movies
+    })
+    cy.viewport(1400, 900)
+    cy.visit("/about.html")
+
+    cy.get("#movie").type("Cat")
+    cy.get("#movieForm").submit()
+
+    cy.get("#movieStatus").should("contain", '1,880 results found for "Cat".').and("contain", "Showing 9 movies.")
+    cy.get("#movieResultsTitle").should("not.exist")
+    cy.get("body").then(($body) => {
+      expect(($body.text().match(/1,880 results/g) || [])).to.have.length(1)
+      expect(($body.text().match(/Showing 9 movies\./g) || [])).to.have.length(1)
+    })
+    cy.get(".movie-results").should("be.visible")
+    cy.get("#movieBox").should(($grid) => {
+      expect(getComputedStyle($grid[0]).gridTemplateColumns.split(" ")).to.have.length(3)
+    })
+    cy.get(".movie-card").should("have.length", 9).each(($card) => {
+      expect(getComputedStyle($card[0]).borderTopStyle).to.equal("dotted")
+    })
+    cy.get(".movie-card").should("contain", "Cat Movie 9").and("not.contain", "Cat Movie 10")
+  })
+
+  it("explains when a movie search has no results", () => {
+    cy.intercept("GET", "https://www.omdbapi.com/**", {
+      Response: "False",
+      Error: "Movie not found!"
     })
     cy.visit("/about.html")
 
-    cy.get("#movie").type("Batman")
+    cy.get("#movie").type("No Such Movie")
     cy.get("#movieForm").submit()
 
-    cy.get("#movieStatus").should("contain", "Total Movies: 1")
-    cy.get(".movieBoxes").should("have.length", 1)
-    cy.get(".movieBoxes p").first().should("contain.text", "<img src=x onerror=alert(1)>")
-    cy.get(".movieBoxes img").should("have.length", 1)
+    cy.get("#movieStatus").should("contain", 'No movies found for "No Such Movie".').and("contain", "Try another title or release year.")
+    cy.get(".movie-results").should("not.be.visible")
+    cy.get(".movie-card").should("not.exist")
   })
 
   it("shows a retry message when an OMDb request fails", () => {
@@ -153,5 +285,6 @@ describe("Movies and Pokemon", () => {
     cy.get("#movieForm").submit()
 
     cy.get("#movieStatus").should("have.text", "Unable to load movies. Please try again.")
+    cy.get(".movie-results").should("not.be.visible")
   })
 })

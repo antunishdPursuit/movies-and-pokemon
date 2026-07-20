@@ -1,37 +1,78 @@
 # Movies and Pokemon
 
-A small vanilla JavaScript API playground with two interactive experiences:
+A responsive vanilla JavaScript project with a Pokemon battle and an OMDb movie search.
 
-- a first-to-six Pokemon battle using live data from [PokeAPI](https://pokeapi.co/);
-- a movie search using the [OMDb API](https://www.omdbapi.com/).
+## Live Application
 
-Live site: [antunishdpursuit.github.io/movies-and-pokemon](https://antunishdpursuit.github.io/movies-and-pokemon/)
+[Open Movies and Pokemon](https://antunishdpursuit.github.io/movies-and-pokemon/)
 
 ## Features
 
-- Choose a starter Pokemon, select a team member, and resolve each round by hovering over the battle artwork.
-- Restart a completed battle and play using keyboard-accessible controls.
-- Search OMDb for movies, with loading, empty-result, and request-failure feedback.
-- Preserve the original Bootstrap-based visual design while using plain HTML, CSS, and JavaScript.
+- Choose Gardevoir, Lopunny, or Primarina as a player
+- Select Pokemon and resolve each round with the Fight control
+- Play a best-of-three match built from first-to-six battles
+- Restart after a completed match and use keyboard-accessible controls
+- Search OMDb by movie title and optional release year
+- View up to nine movie results in a responsive card grid
+- Open each valid result on IMDb
+- Receive clear loading, empty, and error feedback
+- Use the project across desktop and mobile layouts
 
-## Run locally
+## Built With
 
-This is a static site. From the repository root, serve the files with any static server, for example:
+- HTML
+- CSS
+- Vanilla JavaScript
+- [PokeAPI](https://pokeapi.co/)
+- [OMDb API](https://www.omdbapi.com/)
+- Vite for local development and production builds
+- Cypress for end-to-end testing
+- GitHub Actions for automated build and test checks
+- GitHub Pages for deployment
 
-```powershell
-python -m http.server 4174
+## Run Locally
+
+Requirements:
+
+- Node.js 24 or a compatible maintained release
+- npm
+
+```bash
+npm ci
+npm run dev
 ```
 
-Then open `http://127.0.0.1:4174` in a browser.
+Open `http://127.0.0.1:4173`.
 
-## Technical notes
+## Testing
 
-- The project uses browser `fetch`, direct DOM updates, and regular functions; it does not use a JavaScript framework or class architecture.
-- The OMDb key is intentionally a public, rate-limited demo key because GitHub Pages is a static deployment. A server-side proxy would be required to keep a production key secret.
-- PokeAPI and OMDb availability are external dependencies, so the interface includes recovery guidance when movie requests fail.
+```bash
+npm run build
+npm test
+```
 
-## Current limitations
+`npm run build` creates the production build. `npm test` starts the local Vite server and runs the Cypress end-to-end suite with controlled API responses rather than relying on live services.
 
-- Pokemon data is loaded live and may be unavailable if PokeAPI is unreachable.
-- Movie search results depend on OMDb's availability and daily rate limit.
-- Browser tests cover the core game flow and movie-search success and failure states. GitHub Actions runs the build and test suite for pull requests and updates to `main`.
+The repository's Quality workflow runs these checks for pushes to `main` and pull requests.
+
+## Technical Notes
+
+- The browser application remains framework-free; Vite provides development and build tools rather than a runtime UI framework.
+- Remote API text is rendered with DOM methods instead of being inserted as HTML.
+- Pokemon game state, scores, player choices, and resets use regular functions and explicit state.
+- The interface supports keyboard focus, responsive layouts, and clear status messages.
+- The OMDb API key is public by design. This is a static, client-side portfolio app hosted on GitHub Pages, so any key sent by the browser can be inspected. The key accesses public movie metadata and remains subject to OMDb usage limits. We treat it as a replaceable demo credential, not a secret. Keeping a true secret would require a server-side service, which is outside this project's scope. This is an accepted limitation, not an unresolved client-side fix.
+
+## Limitations
+
+- Pokemon data depends on PokeAPI availability.
+- Movie results depend on OMDb availability, matching, and usage limits.
+- Movie searches show at most nine results and do not include pagination.
+- Missing poster artwork uses a text placeholder.
+- The exposed OMDb demo key is not suitable for a private or paid production service.
+
+## Credits
+
+- Pokemon data: [PokeAPI](https://pokeapi.co/)
+- Movie data: [OMDb API](https://www.omdbapi.com/)
+- Movie detail links: [IMDb](https://www.imdb.com/)

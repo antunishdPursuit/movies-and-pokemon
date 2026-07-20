@@ -17,26 +17,15 @@ footer {
     border: 2px solid gainsboro;
 }
 
-    #movie {
-        border-radius: 25px;
-        border: 1px solid;
-        padding: 10px; 
+    #movie,
+    #movieYear {
+        min-height: 2.75rem;
         width: 100%;
-        height: 5px;  
-    }
-    
-    #leftSideBox {
-        margin-right: 20px;
-        border: 3px dotted #060918;
-    }
-    div > .movieBoxes {
-        padding: 1px;
-    
-    }
-    .poster {
-        height: 200px;
-        width: 150px;
-        padding: 0;
+        padding: 0.65rem 0.85rem;
+        border: 2px solid #060918;
+        border-radius: 999px;
+        color: #060918;
+        background: #ffffff;
     }
     a:link {
         color: inherit;
@@ -116,10 +105,6 @@ img {
     width: 100px
 }
 
-.marginBottom{
-    margin-bottom: 15px;
-}
-
 .pokeballs {
     margin-top: 100px;
     margin-bottom: 10px;
@@ -131,8 +116,72 @@ body{
 
 }
 #leftSideBox{
+    align-self: flex-start;
+    margin-right: 20px;
+    padding: 1rem;
+    border: 3px dotted #060918;
     background-size: 200px;
     background-color: #EEEEF0;
+}
+
+.movie-search-panel h2 {
+    margin: 0 0 1rem;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.movie-search-form,
+.movie-field {
+    display: grid;
+}
+
+.movie-search-form {
+    gap: 0.9rem;
+}
+
+.movie-field {
+    gap: 0.35rem;
+}
+
+.movie-field label {
+    font-weight: 800;
+}
+
+.movie-field label span,
+.movie-search-help {
+    font-weight: 400;
+    color: rgb(6 9 24 / 72%);
+}
+
+#movieSubmt {
+    min-height: 2.75rem;
+    padding: 0.55rem 1rem;
+    border: 2px solid #060918;
+    border-radius: 999px;
+    color: #F3E4A2;
+    background: #060918;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#movieSubmt:disabled {
+    cursor: wait;
+    opacity: 0.68;
+}
+
+.movie-search-help {
+    margin: 0.9rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.movie-search-status {
+    min-height: 3.5rem;
+    margin: 0.75rem 0 0;
+    padding: 0.65rem 0.75rem;
+    border-left: 4px solid #706993;
+    background: rgb(255 255 255 / 78%);
+    line-height: 1.4;
 }
 
 #movieBackground {
@@ -142,8 +191,115 @@ body{
     background: linear-gradient(20deg, white, #F3E4A2);
 }
 #movieBox {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 1rem;
     background: linear-gradient(90deg, white, #D8AD72);
 }
+
+.movie-results {
+    min-width: 0;
+}
+
+.movie-results[hidden] {
+    display: none;
+}
+
+.movie-card {
+    min-width: 0;
+    height: 100%;
+    padding: 0.75rem;
+    display: grid;
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    gap: 0.55rem;
+    border: 3px dotted #060918;
+    background: rgb(255 255 255 / 82%);
+}
+
+.movie-poster-frame {
+    min-height: 15rem;
+    display: grid;
+    place-items: center;
+}
+
+.movie-poster,
+.movie-poster-placeholder {
+    width: min(100%, 10rem);
+    aspect-ratio: 2 / 3;
+}
+
+.movie-poster {
+    height: auto;
+    object-fit: cover;
+}
+
+.movie-poster-placeholder {
+    padding: 1rem;
+    display: grid;
+    place-items: center;
+    border: 2px solid #8A9AAE;
+    color: rgb(6 9 24 / 72%);
+    background: #EEEEF0;
+    text-align: center;
+}
+
+.movie-card h3,
+.movie-card-year {
+    margin: 0;
+}
+
+.movie-card h3 {
+    font-size: 1.05rem;
+    line-height: 1.25;
+}
+
+.movie-card-year {
+    color: rgb(6 9 24 / 72%);
+    font-weight: 700;
+}
+
+.movie-card-link {
+    width: fit-content;
+    color: #060918;
+    font-weight: 800;
+    text-underline-offset: 0.2rem;
+}
+
+@media (max-width: 64rem) {
+    #movieBox {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 48rem) {
+    .movie-layout {
+        margin-right: 0;
+        margin-left: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    #leftSideBox {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .movie-results {
+        padding-right: 0;
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 36rem) {
+    #movieBox {
+        grid-template-columns: 1fr;
+    }
+}
+
 #movieFooterBackground {
     background: linear-gradient(135deg, white, #F3E4A2);
 }
@@ -155,7 +311,7 @@ body{
 #changeText {
     background: linear-gradient(018deg,white, #848182);
 }
-#pokemonFooterBackground {
+#siteFooterBackground {
     background: linear-gradient(-45deg, #DE3D34, #848182,#ffffff);
 	animation: gradient 9s ease infinite;
     background-size: 400% 400%;
@@ -178,8 +334,8 @@ body{
     box-sizing: border-box;
 }
 
-.pokemon-header,
-.pokemon-footer {
+.site-header,
+.site-footer {
     width: min(96rem, calc(100% - 2rem));
     margin: 0.5rem auto;
     padding: 0.65rem 1rem;
@@ -190,36 +346,74 @@ body{
     border: 2px solid #060918;
 }
 
-.pokemon-header {
+.site-header {
+    min-height: 5.5rem;
+    padding: 0;
+    display: grid;
+    align-items: stretch;
+    grid-template-columns: 5.5rem minmax(0, 1fr) 5.5rem;
     background: linear-gradient(18deg, #ffffff, #F3E4A2);
 }
 
-.pokemon-brand,
-.pokemon-nav a,
-.pokemon-footer a {
+.site-footer {
+    min-height: 5.5rem;
+    padding: 0 1rem 0 0;
+}
+
+.site-header-center {
+    min-width: 0;
+    padding: 0.65rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.site-header-art,
+.site-footer-art {
+    display: block;
+    object-fit: contain;
+}
+
+.site-header-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.site-footer-art {
+    width: 5.5rem;
+    height: auto;
+    align-self: stretch;
+    object-fit: cover;
+}
+
+.site-brand,
+.site-nav a,
+.site-footer a {
     color: #060918;
     text-decoration: none;
     font-weight: 800;
 }
 
-.pokemon-brand {
+.site-brand {
     font-size: 1.25rem;
 }
 
-.pokemon-nav,
-.pokemon-footer div {
+.site-nav,
+.site-footer div {
     display: flex;
     gap: 0.5rem;
 }
 
-.pokemon-nav a {
+.site-nav a {
     padding: 0.45rem 0.8rem;
     border: 2px solid transparent;
     border-radius: 999px;
 }
 
-.pokemon-nav a[aria-current="page"],
-.pokemon-nav a:hover {
+.site-nav a[aria-current="page"],
+.site-nav a:hover {
     border-color: #060918;
     background: #060918;
     color: #F3E4A2;
@@ -588,14 +782,54 @@ body{
     transform-origin: 50% 90%;
 }
 
-.pokemon-footer {
+.site-footer {
     min-height: 3rem;
     margin-top: 0;
 }
 
-.pokemon-footer p {
+.site-footer p {
     margin: 0;
     font-weight: 800;
+}
+
+.movie-page {
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    color: #060918;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.movie-page *,
+.movie-page *::before,
+.movie-page *::after {
+    box-sizing: border-box;
+}
+
+.movie-main {
+    width: min(88rem, calc(100% - 2rem));
+    max-width: none;
+    margin: 0 auto;
+    padding: 1rem 0;
+}
+
+.movie-page-title {
+    margin: 0 0 1rem;
+    font-size: clamp(2rem, 5vw, 3.7rem);
+    line-height: 1;
+}
+
+.movie-page button,
+.movie-page input {
+    font: inherit;
+}
+
+.movie-page a:focus-visible,
+.movie-page button:focus-visible,
+.movie-page input:focus-visible {
+    outline: 4px solid #060918;
+    outline-offset: 3px;
 }
 
 .pokemon-page a:focus-visible,
@@ -635,22 +869,54 @@ body{
 }
 
 @media (max-width: 44rem) {
-    .pokemon-header,
-    .pokemon-footer,
+    .site-footer,
     .player-selector {
         align-items: stretch;
         grid-template-columns: 1fr;
         flex-direction: column;
     }
 
-    .pokemon-nav,
-    .pokemon-footer div {
+    .site-header {
+        min-height: 0;
+        grid-template-columns: 3.5rem minmax(0, 1fr) 3.5rem;
+        padding: 0.65rem;
+        align-items: center;
+    }
+
+    .site-header-center {
+        padding: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.4rem;
+    }
+
+    .site-header-art {
+        width: 3.5rem;
+        height: 3.5rem;
+        object-fit: contain;
+    }
+
+    .site-nav,
+    .site-footer div {
         width: 100%;
     }
 
-    .pokemon-nav a {
+    .site-nav a {
         flex: 1;
         text-align: center;
+    }
+
+    .site-footer {
+        min-height: 0;
+        padding: 0.65rem 1rem;
+        flex-wrap: wrap;
+    }
+
+    .site-footer-art {
+        width: 3.5rem;
+        height: 3.5rem;
+        align-self: center;
+        object-fit: contain;
     }
 
     .player-options {
@@ -690,7 +956,7 @@ body{
 }
 
 @media (prefers-reduced-motion: reduce) {
-    #pokemonFooterBackground {
+    #siteFooterBackground {
         animation: none;
     }
 

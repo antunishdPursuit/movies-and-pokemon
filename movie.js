@@ -1,120 +1,127 @@
 let movieForm = document.querySelector("#movieForm")
-let error = document.querySelector("#movieStatus")
+let movieStatus = document.querySelector("#movieStatus")
 let movieBox = document.querySelector("#movieBox")
+let movieResults = document.querySelector(".movie-results")
 let movieSubmitButton = document.querySelector("#movieSubmt")
-let count = 0
 
 // Build status and API text as DOM nodes so response values are never parsed as HTML.
 function setStatusLines(...lines) {
-    error.replaceChildren()
+    movieStatus.replaceChildren()
     lines.forEach((line, index) => {
         if (index > 0) {
-            error.append(document.createElement("br"))
+            movieStatus.append(document.createElement("br"))
         }
-        error.append(document.createTextNode(line))
+        movieStatus.append(document.createTextNode(line))
     })
 }
-function createMovieField(label, value) {
-    let field = document.createElement("p")
-    let fieldLabel = document.createElement("strong")
-    fieldLabel.textContent = `${label}:`
-    field.append(fieldLabel, document.createTextNode(` ${value}`))
-    return field
+function createPosterPlaceholder(movieTitle) {
+    let placeholder = document.createElement("div")
+    placeholder.className = "movie-poster-placeholder"
+    placeholder.setAttribute("role", "img")
+    placeholder.setAttribute("aria-label", `Poster unavailable for ${movieTitle}`)
+    placeholder.textContent = "Poster unavailable"
+    return placeholder
+}
+
+function createMovieCard(movie) {
+    let movieCard = document.createElement("article")
+    movieCard.className = "movie-card"
+
+    let posterFrame = document.createElement("div")
+    posterFrame.className = "movie-poster-frame"
+    if (movie.Poster && movie.Poster !== "N/A") {
+        let poster = document.createElement("img")
+        poster.className = "movie-poster"
+        poster.src = movie.Poster
+        poster.alt = `${movie.Title} poster`
+        poster.loading = "lazy"
+        poster.addEventListener("error", () => {
+            poster.replaceWith(createPosterPlaceholder(movie.Title))
+        }, { once: true })
+        posterFrame.append(poster)
+    } else {
+        posterFrame.append(createPosterPlaceholder(movie.Title))
+    }
+
+    let title = document.createElement("h3")
+    title.textContent = movie.Title
+    let year = document.createElement("p")
+    year.className = "movie-card-year"
+    year.textContent = movie.Year
+
+    movieCard.append(posterFrame, title, year)
+    if (typeof movie.imdbID === "string" && /^tt\d+$/.test(movie.imdbID)) {
+        movieCard.dataset.imdbId = movie.imdbID
+        let imdbLink = document.createElement("a")
+        imdbLink.className = "movie-card-link"
+        imdbLink.href = `https://www.imdb.com/title/${movie.imdbID}/`
+        imdbLink.target = "_blank"
+        imdbLink.rel = "noopener noreferrer"
+        imdbLink.textContent = "View on IMDb"
+        imdbLink.setAttribute("aria-label", `View ${movie.Title} on IMDb`)
+        movieCard.append(imdbLink)
+    }
+    return movieCard
+}
+
+function orderMovieResults(searchResults, query) {
+    let normalizedQuery = query.toLowerCase()
+    let startsWithQuery = searchResults.filter((movie) => movie.Title.toLowerCase().startsWith(normalizedQuery))
+    let includesQuery = searchResults.filter((movie) => !movie.Title.toLowerCase().startsWith(normalizedQuery))
+    return startsWithQuery.concat(includesQuery)
 }
 
 function setLoading(isLoading) {
     movieSubmitButton.disabled = isLoading
-    movieSubmitButton.textContent = isLoading ? "Searching..." : "Movie Search"
+    movieSubmitButton.textContent = isLoading ? "Searching..." : "Search movies"
+    movieForm.setAttribute("aria-busy", String(isLoading))
 }
 
 window.onload = () => {
   movieForm.addEventListener("submit", (event) => {
-    count++
         event.preventDefault()
-        let movieType = event.target.movie.value.toLowerCase()
-        const symbols = /[^\w]/g
-        if(movieType.split(" ")[0].length < 3 || movieType.split(" ")[0].search(symbols) >= 0){
-            setStatusLines("More than 3 Letters", "And no symbols")
-        } else {
-            error.textContent = "Movie Search"
-            setLoading(true)
-        fetch(`https://www.omdbapi.com/?apikey=5e8cd208&s=${movieType}`)
+        let movieTitle = event.target.movie.value.trim()
+        let releaseYear = event.target.movieYear.value.trim()
+
+        if (!movieTitle) {
+            setStatusLines("Enter a movie title to search.")
+            return
+        }
+
+        setStatusLines(`Searching for "${movieTitle}"...`)
+        movieBox.replaceChildren()
+        movieResults.hidden = true
+        setLoading(true)
+
+        let apiParameters = new URLSearchParams({
+            apikey: "5e8cd208",
+            s: movieTitle,
+            type: "movie"
+        })
+        if (releaseYear) {
+            apiParameters.set("y", releaseYear)
+        }
+
+        fetch(`https://www.omdbapi.com/?${apiParameters}`)
         .then((response) => response.json())
         .then((json) => {
             let searchResults = json.Search
-            let needToRemove = document.querySelectorAll(".remove")
-            if(count > 1){
-                for (let index = 0; index < needToRemove.length; index++) {
-                    const element = needToRemove[index];
-                    element.remove()
-
-                }
-            }
             if(searchResults === undefined || json.Response === "False"){
-            error.textContent = "No Search Results, Please Try again"
+                setStatusLines(`No movies found for "${movieTitle}".`, "Try another title or release year.")
             } else {
-            setStatusLines(`Total Movies: ${json.totalResults}`, "Only displaying the top 10")
-                for (let index = 0; index < searchResults.length; index++) {
-                    const element = searchResults[index];
-                    let lowerCased = element.Title.toLowerCase()
-                    if(lowerCased.indexOf(movieType) === 0){
-                        let movieSearched = document.createElement("div")
-                        movieSearched.classList.add("col-md-4")
-                        movieSearched.classList.add("col-sm-4")
-                        movieSearched.classList.add("col-lg-4")
-                        movieSearched.classList.add("remove")
-                        movieSearched.classList.add("movieBoxes")
-                        let poster = document.createElement("img")
-                        poster.alt = element.Title
-                        poster.classList.add("poster")
-                        poster.src = element.Poster
-                        let title = createMovieField("Title", element.Title)
-                        let type = createMovieField("Type", element.Type)
-                        let year = createMovieField("Year", element.Year)
-                        let imdbID = createMovieField("ImdbID", element.imdbID)
-                        movieSearched.append(poster)
-                        movieSearched.append(title)
-                        movieSearched.append(type)
-                        movieSearched.append(year)
-                        movieSearched.append(imdbID)
-                        movieBox.append(movieSearched)
-                    }
-                }
-                for (let index = 0; index < searchResults.length; index++) {
-                    const element = searchResults[index];
-                    let lowerCased = element.Title.toLowerCase()
-                    if(lowerCased.indexOf(movieType) !== 0){
-                        let movieSearched = document.createElement("div")
-                        movieSearched.classList.add("col-md-4")
-                        movieSearched.classList.add("col-sm-4")
-                        movieSearched.classList.add("col-lg-4")
-                        movieSearched.classList.add("remove")
-                        movieSearched.classList.add("movieBoxes")
-                        let poster = document.createElement("img")
-                        poster.alt = element.Title
-                        poster.classList.add("poster")
-                        poster.src = element.Poster
-                        let title = createMovieField("Title", element.Title)
-                        let type = createMovieField("Type", element.Type)
-                        let year = createMovieField("Year", element.Year)
-                        let imdbID = createMovieField("ImdbID", element.imdbID)
-                        movieSearched.append(poster)
-                        movieSearched.append(title)
-                        movieSearched.append(type)
-                        movieSearched.append(year)
-                        movieSearched.append(imdbID)
-                        movieBox.append(movieSearched)
-                    }
-                }
+                let visibleResults = orderMovieResults(searchResults, movieTitle).slice(0, 9)
+                let formattedTotal = Number(json.totalResults).toLocaleString()
+                let resultLabel = Number(json.totalResults) === 1 ? "result" : "results"
+                let visibleLabel = visibleResults.length === 1 ? "movie" : "movies"
+                setStatusLines(`${formattedTotal} ${resultLabel} found for "${movieTitle}".`, `Showing ${visibleResults.length} ${visibleLabel}.`)
+                movieBox.append(...visibleResults.map(createMovieCard))
+                movieResults.hidden = false
             }
 
         })
         .catch(() => {
-            error.textContent = "Unable to load movies. Please try again."
+            movieStatus.textContent = "Unable to load movies. Please try again."
         })
         .finally(() => setLoading(false))
-        }
-        event.target.movie.value = ""
-
     })
 }
