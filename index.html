@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokemon Battle | Movies and Pokemon</title>
-    <meta name="description" content="Choose a starter and play a first-to-six Pokemon battle in this vanilla JavaScript playground.">
+    <meta name="description" content="Choose a player and play a first-to-six Pokemon battle in this vanilla JavaScript playground.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
@@ -26,19 +26,15 @@
         <section class="pokemon-intro" aria-labelledby="battle-title">
             <p class="pokemon-eyebrow">Pokemon Battle</p>
             <h1 id="battle-title">Build your team. Win the battle.</h1>
-            <p>Choose a starter, pick one Pokemon from your team for each round, and be the first to six wins.</p>
+            <p>Choose a player, pick one Pokemon from the team for each round, and be the first to six wins.</p>
         </section>
 
         <section class="pokemon-game" aria-label="Pokemon battle game">
-            <section class="starter-card" aria-labelledby="starter-title">
-                <div class="starter-card__copy">
-                    <h2 id="starter-title">Choose your starter</h2>
-                    <p>Starting again resets the score.</p>
-                </div>
-                <div id="pokeballContainer" class="starter-options">
-                    <button class="pokeball starter-choice" type="button" data-starter="gardevoir" aria-label="Start a game with Gardevoir"><img src="pokeball.png" alt=""><span>Gardevoir</span></button>
-                    <button class="pokeball starter-choice" type="button" data-starter="lopunny" aria-label="Start a game with Lopunny"><img src="pokeball.png" alt=""><span>Lopunny</span></button>
-                    <button class="pokeball starter-choice" type="button" data-starter="primarina" aria-label="Start a game with Primarina"><img src="pokeball.png" alt=""><span>Primarina</span></button>
+            <section class="player-selector" aria-label="Choose your player">
+                <div id="playerChoiceContainer" class="player-options" data-selection-state="ready">
+                    <button class="pokeball player-choice" type="button" data-player="gardevoir" aria-label="Choose Gardevoir as your player"><img src="pokeball.png" alt=""><span>Gardevoir</span></button>
+                    <button class="pokeball player-choice" type="button" data-player="lopunny" aria-label="Choose Lopunny as your player"><img src="pokeball.png" alt=""><span>Lopunny</span></button>
+                    <button class="pokeball player-choice" type="button" data-player="primarina" aria-label="Choose Primarina as your player"><img src="pokeball.png" alt=""><span>Primarina</span></button>
                 </div>
                 <button id="resetGame" class="pokemon-secondary-button" type="button" hidden>Play again</button>
             </section>
@@ -60,15 +56,14 @@
                 <section class="battle-stage" aria-labelledby="battle-stage-title">
                     <h2 id="battle-stage-title">Battle stage</h2>
                     <div class="battle-leaders">
-                        <div><span>Player</span><img id="randomPokemon" src="clearBackground.png" alt="Your selected starter"></div>
-                        <div><span>Opponent</span><img class="trainerPokemon" id="randomShinyPokemon" src="clearBackground.png" alt="Opponent trainer Pokemon"></div>
+                        <div><span>Opponent</span><img class="trainerPokemon" id="randomShinyPokemon" src="clearBackground.png" alt="Opponent player"></div>
                     </div>
                     <div class="battle-action" aria-label="Current battle">
                         <img id="gardevoir" src="clearBackground.png" alt="Player's current Pokemon">
                         <img id="lopunny" src="clearBackground.png" alt="Battle result">
                         <img id="primarina" src="clearBackground.png" alt="Opponent's current Pokemon">
                     </div>
-                    <p id="changeText" class="battle-status" role="status" aria-live="polite"><strong>How to play:</strong> Choose a starter, select a Pokemon from your team, then move over the center battle image to resolve the round.</p>
+                    <p id="changeText" class="battle-status" role="status" aria-live="polite"><strong>How to play:</strong> Choose a player, select a Pokemon from the team, then move over the center battle image to resolve the round.</p>
                 </section>
 
                 <section class="team-card" aria-labelledby="opponent-team-title">

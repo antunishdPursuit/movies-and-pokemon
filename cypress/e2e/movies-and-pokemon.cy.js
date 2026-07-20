@@ -11,9 +11,10 @@ describe("Movies and Pokemon", () => {
     cy.intercept("GET", "https://pokeapi.co/api/v2/pokemon/**", pokemonResponse)
     cy.visit("/")
 
-    cy.get('button[aria-label="Start a game with Gardevoir"]').focus().type("{enter}")
-    cy.get('.starter-choice[data-player-state="active"]').should("have.length", 1)
-    cy.get('.starter-choice[data-player-state="locked"]').should("have.length", 2)
+    cy.get('button[aria-label="Choose Gardevoir as your player"]').focus().type("{enter}")
+    cy.get('.player-choice[data-player-state="active"]').should("have.length", 1)
+    cy.get('.player-choice[data-player-state="active"] img').should("have.attr", "alt", "Gardevoir, current player")
+    cy.get('.player-choice[data-player-state="locked"]').should("have.length", 2)
 
     cy.window().then((window) => {
       cy.stub(window.Math, "random").returns(0.9)
@@ -27,10 +28,10 @@ describe("Movies and Pokemon", () => {
     }
 
     cy.get("#changeText").should("contain", "Match: Player 1 vs Opponent 0")
-    cy.get('.starter-choice[data-player-state="completed"]').should("have.length", 1)
-    cy.get('.starter-choice[data-player-state="available"]').should("have.length", 2)
+    cy.get('.player-choice[data-player-state="completed"]').should("have.length", 1)
+    cy.get('.player-choice[data-player-state="available"]').should("have.length", 2)
 
-    cy.get('.starter-choice[data-starter="lopunny"]').click()
+    cy.get('.player-choice[data-player="lopunny"]').click()
     for (let round = 0; round < 6; round++) {
       cy.get(".pokemon-choice").eq(round).click()
       cy.get("#lopunny").trigger("mouseover")
@@ -41,14 +42,14 @@ describe("Movies and Pokemon", () => {
     cy.get("#resetGame").should("be.visible").click()
     cy.get("#resetGame").should("not.be.visible")
     cy.get("#changeText").should("contain", "Match: Player 0 vs Opponent 0")
-    cy.get('.starter-choice[data-player-state="available"]').should("have.length", 3)
+    cy.get('.player-choice[data-player-state="available"]').should("have.length", 3)
     cy.get(".pokemon-choice").should("be.disabled")
   })
 
   it("restores both Pokemon teams after an unresolved six-Pokemon cycle", () => {
     cy.intercept("GET", "https://pokeapi.co/api/v2/pokemon/**", pokemonResponse)
     cy.visit("/")
-    cy.get('.starter-choice[data-starter="gardevoir"]').click()
+    cy.get('.player-choice[data-player="gardevoir"]').click()
 
     cy.window().then((window) => {
       let randomCall = 0

@@ -266,39 +266,55 @@ body{
     gap: 0.75rem;
 }
 
-.starter-card,
+.player-selector,
 .team-card,
 .battle-stage {
     border: 2px solid #060918;
     background: rgba(255,255,255,0.9);
 }
 
-.starter-card {
+.player-selector {
     min-height: 7.5rem;
     padding: 0.75rem 1rem;
-    display: grid;
-    grid-template-columns: minmax(10rem, 1fr) auto auto;
-    align-items: center;
-    gap: 1rem;
+    position: relative;
     background: linear-gradient(18deg, #ffffff, #848182);
 }
 
-.starter-card h2,
 .team-card h2,
 .battle-stage h2 {
     margin: 0;
     font-size: 1.15rem;
 }
 
-.starter-card p,
 .team-card p {
     margin: 0.3rem 0 0;
     line-height: 1.35;
 }
 
-.starter-options {
+.player-options {
+    min-height: 6.5rem;
+    position: relative;
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 0.55rem;
+}
+
+.player-options[data-selection-state="battle"] {
+    justify-content: flex-start;
+    padding-right: 50%;
+}
+
+.player-options[data-selection-state="battle"] .player-choice[data-player-state="active"] {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.player-options[data-selection-state="battle"] .player-choice[data-player-state="locked"],
+.player-options[data-selection-state="battle"] .player-choice[data-player-state="completed"] {
+    flex: 0 0 4.5rem;
 }
 
 .pokemon-page .pokeball {
@@ -362,6 +378,30 @@ body{
     background: #F3E4A2;
 }
 
+.pokemon-page .player-choice[data-player-state="active"] img {
+    width: 6rem;
+    height: 6rem;
+}
+
+.pokemon-page .player-choice[data-player-state="locked"] img,
+.pokemon-page .player-choice[data-player-state="completed"] img {
+    filter: grayscale(1);
+    opacity: 0.38;
+    transform: scale(0.78);
+}
+
+.pokemon-page .player-choice[data-player-state="locked"],
+.pokemon-page .player-choice[data-player-state="completed"] {
+    color: rgb(6 9 24 / 58%);
+    cursor: not-allowed;
+}
+
+.pokemon-page .player-choice[data-player-state="available"] img,
+.pokemon-page .player-choice[data-player-state="active"] img {
+    animation: player-jiggle 1.4s ease-in-out infinite;
+    transform-origin: 50% 90%;
+}
+
 .pokemon-page .pokemon-choice[data-team-state="used"] img,
 .pokemon-page .team-grid .trainerPokemon[data-team-state="used"] {
     filter: grayscale(1);
@@ -388,7 +428,7 @@ body{
 }
 
 .battle-leaders {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 0.5rem;
     margin-top: 0.35rem;
 }
@@ -457,7 +497,7 @@ body{
 @media (max-width: 44rem) {
     .pokemon-header,
     .pokemon-footer,
-    .starter-card {
+    .player-selector {
         align-items: stretch;
         grid-template-columns: 1fr;
         flex-direction: column;
@@ -473,8 +513,22 @@ body{
         text-align: center;
     }
 
-    .starter-options {
+    .player-options {
         justify-content: space-between;
+    }
+
+    .player-options[data-selection-state="battle"] {
+        justify-content: flex-start;
+        padding-right: 48%;
+    }
+
+    .player-options[data-selection-state="battle"] .player-choice[data-player-state="locked"],
+    .player-options[data-selection-state="battle"] .player-choice[data-player-state="completed"] {
+        flex-basis: 3.2rem;
+    }
+
+    .player-options[data-selection-state="battle"] .player-choice[data-player-state="active"] {
+        left: 64%;
     }
 
     .battle-board {
@@ -485,6 +539,21 @@ body{
 @media (prefers-reduced-motion: reduce) {
     #pokemonFooterBackground {
         animation: none;
+    }
+
+    .pokemon-page .player-choice img {
+        animation: none;
+    }
+}
+
+@keyframes player-jiggle {
+    0%, 100% {
+        rotate: -2deg;
+        translate: 0 0;
+    }
+    50% {
+        rotate: 2deg;
+        translate: 0 -0.3rem;
     }
 }
 @keyframes gradient {
