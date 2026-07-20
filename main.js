@@ -5,17 +5,15 @@ import leftImage from "./left.png"
 import pokeballImage from "./pokeball.png"
 import rightImage from "./right.png"
 
-let pokeArr = ["gardevoir", "lopunny", "primarina"]
 let randomPokemon = document.getElementById("randomPokemon")
 let starterPokemonsters = [3, 6, 9, 12, 15, 18]
 let playerPokemons = document.querySelectorAll(".playerPokemon")
 let playerChoices = document.querySelectorAll(".pokemon-choice")
 let trainerPokemons = document.querySelectorAll(".trainerPokemon")
-let starterPokeballs = document.querySelectorAll(".pokeball")
+let starterPokeballs = document.querySelectorAll(".starter-choice")
 let gardevoir = document.querySelector("#gardevoir")
 let lopunny = document.querySelector("#lopunny")
 let primarina = document.querySelector("#primarina")
-let pokeballContainer = document.querySelector("#pokeballContainer")
 let changeText = document.getElementById("changeText")
 let resetButton = document.getElementById("resetGame")
 
@@ -61,8 +59,6 @@ function resetStarterPokeballs() {
   starterPokeballs.forEach((pokeball) => {
     pokeball.querySelector("img").src = pokeballImage
   })
-  pokeballContainer.classList.remove("justify-content-between")
-  pokeballContainer.classList.add("justify-content-center")
 }
 
 function startGame(starterName) {
@@ -74,8 +70,6 @@ function startGame(starterName) {
   selectedStarter = starterName
   resetButton.hidden = true
 
-  pokeballContainer.classList.remove("justify-content-center")
-  pokeballContainer.classList.add("justify-content-between")
   gardevoir.src = clearBackground
   lopunny.src = fightImage
   primarina.src = clearBackground
@@ -146,8 +140,8 @@ function resolveBattle() {
 }
 
 window.onload = () => {
-  starterPokeballs.forEach((pokeball, index) => {
-    pokeball.addEventListener("click", () => startGame(pokeArr[index]))
+  starterPokeballs.forEach((pokeball) => {
+    pokeball.addEventListener("click", () => startGame(pokeball.dataset.starter))
   })
   playerChoices.forEach((pokemon) => pokemon.addEventListener("click", selectPlayerPokemon))
   lopunny.addEventListener("mouseover", resolveBattle)
