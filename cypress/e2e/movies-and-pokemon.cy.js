@@ -7,6 +7,31 @@ const pokemonResponse = {
 
 // Stub external APIs so these tests verify this project's UI and state behavior deterministically.
 describe("Movies and Pokemon", () => {
+  it("keeps the ready-to-fight content inside the desktop battle stage", () => {
+    cy.viewport(1903, 959)
+    cy.intercept("GET", "https://pokeapi.co/api/v2/pokemon/**", pokemonResponse)
+    cy.visit("/")
+
+    cy.get('.player-choice[data-player="gardevoir"]').click()
+    cy.get(".pokemon-choice").first().click()
+
+    cy.get(".battle-stage").then(($stage) => {
+      const stage = $stage[0].getBoundingClientRect()
+      const selectors = ["#gardevoir", "#battleControl", "#primarina"]
+
+      selectors.forEach((selector) => {
+        const child = $stage[0].querySelector(selector).getBoundingClientRect()
+        expect(child.left).to.be.at.least(stage.left)
+        expect(child.right).to.be.at.most(stage.right)
+        expect(child.top).to.be.at.least(stage.top)
+        expect(child.bottom).to.be.at.most(stage.bottom)
+      })
+
+      const fight = $stage[0].querySelector("#battleControl").getBoundingClientRect()
+      expect(fight.left + fight.width / 2).to.be.closeTo(stage.left + stage.width / 2, 1)
+    })
+  })
+
   it("ends the Pokemon match when the player wins two battles", () => {
     cy.intercept("GET", "https://pokeapi.co/api/v2/pokemon/**", pokemonResponse)
     cy.visit("/")
