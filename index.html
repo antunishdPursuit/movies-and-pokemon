@@ -4,98 +4,116 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies and Pokemon</title>
-    <meta name="description" content="A vanilla JavaScript playground with a Pokemon battle and an OMDb movie search.">
-    <link rel="stylesheet" href="style.css">
+    <title>Pokemon Battle | Movies and Pokemon</title>
+    <meta name="description" content="Choose a player and play a first-to-six Pokemon battle in this vanilla JavaScript playground.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
     <link rel="manifest" href="favicon_io/site.webmanifest">
 </head>
-    <body id="pokemonBackground">
-        <header class="container">
-                <div class="row ">
-                    <div class="col-auto">
-                        <img class="row" id="randomPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    </div>
-                    <div class="col row align-items-center justify-content-center">
-                        <h1 class="col-auto"><a href="index.html" target="_self" rel="noopener noreferrer">About</a></h1>
-                        <h1 class="col-auto"><a href="about.html" target="_self" rel="noopener noreferrer">Movie</a></h1>
-                    </div>
-                    <div class="col-auto">
-                        <img class="row trainerPokemon" id="randomShinyPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    </div>
+<body id="pokemonBackground" class="pokemon-page">
+    <header class="pokemon-header">
+        <a class="pokemon-brand" href="index.html">Movies and Pokemon</a>
+        <nav class="pokemon-nav" aria-label="Primary navigation">
+            <a href="index.html" aria-current="page">Pokemon Battle</a>
+            <a href="about.html">Movie Search</a>
+        </nav>
+    </header>
+
+    <main class="pokemon-main">
+        <section class="pokemon-intro" aria-labelledby="battle-title">
+            <h1 id="battle-title">Build your team. Win the battle.</h1>
+            <p>Choose a player, pick one Pokemon from the team for each round, and be the first to six wins.</p>
+            <h2>How to play</h2>
+            <ol class="game-instructions">
+                <li>Choose Gardevoir, Lopunny, or Primarina as your player.</li>
+                <li>Choose one Pokemon from your team.</li>
+                <li>Hover over or select Fight to resolve the round.</li>
+                <li>Win six rounds to win a battle. Win two battles to win the match.</li>
+            </ol>
+        </section>
+
+        <section class="pokemon-game" aria-label="Pokemon battle game">
+            <section class="player-selector" aria-label="Choose your player">
+                <div id="playerChoiceContainer" class="player-options" data-selection-state="ready">
+                    <button class="pokeball player-choice" type="button" data-player="gardevoir" aria-label="Choose Gardevoir as your player"><img src="pokeball.png" alt=""><span>Gardevoir</span></button>
+                    <button class="pokeball player-choice" type="button" data-player="lopunny" aria-label="Choose Lopunny as your player"><img src="pokeball.png" alt=""><span>Lopunny</span></button>
+                    <button class="pokeball player-choice" type="button" data-player="primarina" aria-label="Choose Primarina as your player"><img src="pokeball.png" alt=""><span>Primarina</span></button>
                 </div>
-        </header>
-        <main class="container">
-            <div class="row  align-items-center">
-                <div class="col-auto align-items-start">
-                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
-                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
-                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
-                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
-                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
-                    <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="row playerPokemon" src="clearBackground.png" alt=""></button>
-                </div>
-                <div class="col row"> 
-                    <!-- justify-content-center -->
-                    <img class ="col-auto" src="kaola.jpg" id="koala" alt="Kaola">
-                    <p class=" col align-items-start  align-self-start bio">
-                        Hi! My name is Dennys Antunish
-                        <br>    
-                        (Optional) My pronouns are He/Him
-                        <br>    
-                        I am a Pursuit fellow with experience in full stack development with a focus on react and javascript.
-                        <br>    
-                        My journey into software engineering began when I started to wonder how computers and other applications worked.
-                        My skills include using ServiceNow, html, css, javascript, react, and bootstrap
-                        <br>    
-                        Given my passion for AI and the wonders of Chatgpt
-                        <br>    
-                        I am currently working to understand how these AI models are created and hope to contribute to the future of AI.
-                    </p>
-                    <div class="row justify-content-center" id="pokeballContainer">
-                        <button class="col-auto pokeball" type="button" aria-label="Start a game with Gardevoir"><img src="pokeball.png" alt="" id="gardevoir"></button>
-                        <button class="col-auto pokeball" type="button" aria-label="Start a game with Lopunny"><img src="pokeball.png" alt="" id="lopunny"></button>
-                        <button class="col-auto align-items-end pokeball" type="button" aria-label="Start a game with Primarina"><img src="pokeball.png" alt="" id="primarina"></button>
+                <button id="resetGame" class="pokemon-secondary-button" type="button" hidden>Play again</button>
+            </section>
+
+            <div class="battle-board">
+                <section class="team-card" aria-labelledby="player-team-title">
+                    <h2 id="player-team-title">Your team</h2>
+                    <p>Pick your Pokemon.</p>
+                    <div class="team-grid">
+                        <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="playerPokemon" src="clearBackground.png" alt=""></button>
+                        <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="playerPokemon" src="clearBackground.png" alt=""></button>
+                        <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="playerPokemon" src="clearBackground.png" alt=""></button>
+                        <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="playerPokemon" src="clearBackground.png" alt=""></button>
+                        <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="playerPokemon" src="clearBackground.png" alt=""></button>
+                        <button class="pokemon-choice" type="button" aria-label="Choose this Pokemon for the next battle"><img class="playerPokemon" src="clearBackground.png" alt=""></button>
                     </div>
-                    <button id="resetGame" type="button" hidden>Play again</button>
-                    <p class=" align-items-end" id = "changeText" role="status" aria-live="polite">
-                        <strong>Instructions:</strong> <br>
-                        The above functionality showcases the click event listener.
-                        <br>
-                        After clicking one of the above pokeballs, one of three pokemon will appear on the upper left. Six additional pokemon will spawn below the chosen pokemon.
-                        <br>
-                       At the same time, the right side will spawn 1 random pokemon trainer on the upper right and a 6 random pokemon team.
-                        <br>
-                    </p>
-                </div>
-                <div class="col-auto align-items-end">
-                    <img class="row trainerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row trainerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row trainerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row trainerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row trainerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                    <img class="row trainerPokemon" src="clearBackground.png" alt="Random Pokemon">
-                </div>
+                </section>
+
+                <section class="battle-stage" aria-labelledby="battle-stage-title">
+                    <h2 id="battle-stage-title">Battle stage</h2>
+                    <div class="battle-score" aria-label="Current battle score">
+                        <div><span>Player</span><strong id="playerBattleScore">0</strong></div>
+                        <div><span>Opponent</span><strong id="opponentBattleScore">0</strong></div>
+                    </div>
+                    <div class="battle-action" aria-label="Current battle">
+                        <img id="gardevoir" src="clearBackground.png" alt="Player's current Pokemon">
+                        <button id="battleControl" class="battle-control" type="button" aria-label="Resolve this round" disabled><img id="lopunny" src="clearBackground.png" alt="Fight"></button>
+                        <img id="primarina" src="clearBackground.png" alt="Opponent's current Pokemon">
+                    </div>
+                    <p id="roundStatus" class="round-status" aria-live="polite">Choose a team Pokemon to prepare the round.</p>
+                </section>
+
+                <section class="team-card" aria-labelledby="opponent-team-title">
+                    <h2 id="opponent-team-title">Opponent team</h2>
+                    <p>A rival is picked each round.</p>
+                    <div class="team-grid">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                        <img class="trainerPokemon opponent-team-pokemon" src="clearBackground.png" alt="Opponent team Pokemon">
+                    </div>
+                </section>
             </div>
-        </main>
-        <footer class="container" id="pokemonFooterBackground">
-                <div class="row">
-                    <div class="col-auto">
-                        <img class = "row" src="programming.gif" alt="girl programming">
+
+            <section class="match-opponent-panel" aria-label="Match score and opponent player">
+                <div class="match-summary" aria-labelledby="match-score-title">
+                    <h2 id="match-score-title">Match score</h2>
+                    <div class="match-score" aria-label="Overall match score">
+                        <div><span>Player</span><strong id="playerMatchScore">0</strong></div>
+                        <div><span>Opponent</span><strong id="opponentMatchScore">0</strong></div>
                     </div>
-                    <div class="col row align-items-end justify-content-end">
-                        <h1 class="col-auto footer"><a href="https://github.com/antunishdPursuit" target="_blank" rel="noopener noreferrer">Github</a></h1>
-                        <h1 class="col-auto footer"><a href="https://www.linkedin.com/in/dennys-antunish/" target="_blank" rel="noopener noreferrer">Linkedin</a></h1>
-                    </div>
-                    <div class="col-auto">
-                        <img src="clearBackground.png" alt="Random Pokemon">
-                    </div>
+                    <p id="changeText" class="match-status" role="status" aria-live="polite">Choose a player to begin the first battle.</p>
                 </div>
-        </footer>
+
+                <div class="opponent-player-card" aria-labelledby="opponent-player-title">
+                    <h2 id="opponent-player-title">Opponent player</h2>
+                    <img class="trainerPokemon" id="randomShinyPokemon" src="clearBackground.png" alt="Opponent player">
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <footer class="pokemon-footer" id="pokemonFooterBackground">
+        <p>Movies and Pokemon</p>
+        <div>
+            <a href="https://github.com/antunishdPursuit" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/in/dennys-antunish/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </div>
+    </footer>
+
     <script type="module" src="main.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    </body>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
 </html>

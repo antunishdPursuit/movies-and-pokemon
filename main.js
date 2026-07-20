@@ -1,32 +1,49 @@
-import clearBackground from "./clearBackground.png"
-import defeatImage from "./defeat.gif"
-import fightImage from "./fight.gif"
-import leftImage from "./left.png"
-import pokeballImage from "./pokeball.png"
-import rightImage from "./right.png"
+// Module-relative URLs work with both Vite and the plain local server in the README.
+const clearBackground = new URL("./clearBackground.png", import.meta.url).href
+const defeatImage = new URL("./defeat.gif", import.meta.url).href
+const fightImage = new URL("./fight.gif", import.meta.url).href
+const leftImage = new URL("./left.png", import.meta.url).href
+const pokeballImage = new URL("./pokeball.png", import.meta.url).href
+const rightImage = new URL("./right.png", import.meta.url).href
 
-let pokeArr = ["gardevoir", "lopunny", "primarina"]
-let randomPokemon = document.getElementById("randomPokemon")
-let starterPokemonsters = [3, 6, 9, 12, 15, 18]
-let playerPokemons = document.querySelectorAll(".playerPokemon")
-let playerChoices = document.querySelectorAll(".pokemon-choice")
-let trainerPokemons = document.querySelectorAll(".trainerPokemon")
-let starterPokeballs = document.querySelectorAll(".pokeball")
-let gardevoir = document.querySelector("#gardevoir")
-let lopunny = document.querySelector("#lopunny")
-let primarina = document.querySelector("#primarina")
-let pokeballContainer = document.querySelector("#pokeballContainer")
-let changeText = document.getElementById("changeText")
+let teamPokemonIds = [3, 6, 9, 12, 15, 18]
+let playerTeamPokemon = document.querySelectorAll(".playerPokemon")
+let teamPokemonChoices = document.querySelectorAll(".pokemon-choice")
+let opponentPortrait = document.getElementById("randomShinyPokemon")
+let opponentTeamPokemon = Array.from(document.querySelectorAll(".opponent-team-pokemon"))
+let playerChoices = document.querySelectorAll(".player-choice")
+let playerChoiceContainer = document.getElementById("playerChoiceContainer")
+let playerBattlePokemon = document.querySelector("#gardevoir")
+let battleResult = document.querySelector("#lopunny")
+let battleControl = document.getElementById("battleControl")
+let opponentBattlePokemon = document.querySelector("#primarina")
+let battleStatus = document.getElementById("changeText")
+let roundStatus = document.getElementById("roundStatus")
+let playerBattleScoreOutput = document.getElementById("playerBattleScore")
+let opponentBattleScoreOutput = document.getElementById("opponentBattleScore")
+let playerMatchScoreOutput = document.getElementById("playerMatchScore")
+let opponentMatchScoreOutput = document.getElementById("opponentMatchScore")
 let resetButton = document.getElementById("resetGame")
 
-let playerScore = 0
-let enemyScore = 0
-let gameStarted = false
-let gameOver = false
+let playerBattleScore = 0
+let opponentBattleScore = 0
+let playerMatchScore = 0
+let opponentMatchScore = 0
+let currentPlayer = ""
+let completedPlayers = new Set()
+let usedTeamPokemon = new Set()
+let usedOpponentPokemon = new Set()
+let battleInProgress = false
+let matchOver = false
 let roundReady = false
-let selectedStarter = ""
 
-// PokeAPI failures should leave the page recoverable instead of blocking a new game.
+// Preload swapped battle art so fallback text does not flash during a round result.
+;[defeatImage, leftImage, rightImage].forEach((source) => {
+  let image = new Image()
+  image.src = source
+})
+
+// PokeAPI failures should leave the page recoverable instead of blocking a new match.
 function loadPokemon(id, image, sprite = "front_default") {
   fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
     .then((response) => response.json())
@@ -34,122 +51,269 @@ function loadPokemon(id, image, sprite = "front_default") {
       image.src = json.sprites[sprite]
     })
     .catch(() => {
-      changeText.textContent = "Unable to load Pokemon. Please try starting a new game."
+      roundStatus.textContent = "Unable to load Pokemon. Please try again."
     })
 }
 
-function updateBattleText(result = "") {
-  changeText.replaceChildren()
-  changeText.append(document.createTextNode(`Player: ${playerScore} Vs Enemy: ${enemyScore} => Win Condition: First to six!`))
-  changeText.append(document.createElement("br"))
+function updateScoreDisplays() {
+  playerBattleScoreOutput.textContent = playerBattleScore
+  opponentBattleScoreOutput.textContent = opponentBattleScore
+  playerMatchScoreOutput.textContent = playerMatchScore
+  opponentMatchScoreOutput.textContent = opponentMatchScore
+}
 
-  let instructions = document.createElement("strong")
-  instructions.textContent = "Instructions:"
-  changeText.append(instructions, document.createElement("br"))
-  changeText.append(document.createTextNode("Now we will showcase the mouseover event listner."), document.createElement("br"))
-  changeText.append(document.createTextNode("After clicking on one of the pokemon on the left side, the chosen pokemon will move to the middle as well as a random pokemon from the right side."), document.createElement("br"))
-  changeText.append(document.createTextNode("Move your mouse over the fight gif and it will show you who won the pokemon battle."), document.createElement("br"))
-  changeText.append(document.createTextNode("Click on another pokemon from the left to have another pokemon battle."))
+function setMatchStatus(message) {
+  updateScoreDisplays()
+  battleStatus.textContent = message
+}
 
-  if (result) {
-    changeText.append(document.createElement("br"), document.createTextNode(result))
+function setRoundStatus(message) {
+  updateScoreDisplays()
+  roundStatus.textContent = message
+}
+
+function updatePlayerChoiceState() {
+  playerChoices.forEach((choice) => {
+    let playerName = choice.dataset.player
+    let displayName = choice.querySelector("span").textContent
+    let state = "available"
+
+    if (matchOver) {
+      state = completedPlayers.has(playerName) ? "completed" : "locked"
+    } else if (battleInProgress) {
+      state = playerName === currentPlayer ? "active" : "locked"
+    } else if (completedPlayers.has(playerName)) {
+      state = "completed"
+    }
+
+    choice.dataset.playerState = state
+    choice.disabled = state !== "available"
+    choice.setAttribute("aria-pressed", String(state === "active"))
+
+    if (state === "active") {
+      choice.setAttribute("aria-label", `${displayName} is the current player`)
+    } else if (state === "completed") {
+      choice.setAttribute("aria-label", `${displayName} has completed a battle`)
+    } else if (state === "locked") {
+      choice.setAttribute("aria-label", `${displayName} is unavailable`)
+    } else {
+      choice.setAttribute("aria-label", `Choose ${displayName} as your player`)
+    }
+  })
+
+  if (matchOver) {
+    playerChoiceContainer.dataset.selectionState = "match-over"
+  } else if (battleInProgress) {
+    playerChoiceContainer.dataset.selectionState = "battle"
+  } else if (completedPlayers.size > 0) {
+    playerChoiceContainer.dataset.selectionState = "between-battles"
+  } else {
+    playerChoiceContainer.dataset.selectionState = "ready"
   }
 }
 
-// A finished game restores real start controls instead of leaving hidden restart targets in battle artwork.
-function resetStarterPokeballs() {
-  starterPokeballs.forEach((pokeball) => {
-    pokeball.querySelector("img").src = pokeballImage
+function resetPokemonCycle(teamEnabled = true) {
+  usedTeamPokemon.clear()
+  usedOpponentPokemon.clear()
+
+  teamPokemonChoices.forEach((choice) => {
+    choice.dataset.teamState = "available"
+    choice.disabled = !teamEnabled
   })
-  pokeballContainer.classList.remove("justify-content-between")
-  pokeballContainer.classList.add("justify-content-center")
+  opponentTeamPokemon.forEach((pokemon) => {
+    pokemon.dataset.teamState = "available"
+  })
 }
 
-function startGame(starterName) {
-  playerScore = 0
-  enemyScore = 0
-  gameStarted = true
-  gameOver = false
-  roundReady = false
-  selectedStarter = starterName
-  resetButton.hidden = true
-
-  pokeballContainer.classList.remove("justify-content-center")
-  pokeballContainer.classList.add("justify-content-between")
-  gardevoir.src = clearBackground
-  lopunny.src = fightImage
-  primarina.src = clearBackground
-
-  loadPokemon(starterName, randomPokemon, "front_shiny")
-
-  let randomSevenNumbers = Array.from({ length: 7 }, () => Math.ceil(Math.random() * 1010))
-  trainerPokemons.forEach((pokemon, index) => loadPokemon(randomSevenNumbers[index], pokemon))
-  playerPokemons.forEach((pokemon, index) => loadPokemon(starterPokemonsters[index], pokemon))
-
-  updateBattleText()
+function lockTeamChoices() {
+  teamPokemonChoices.forEach((choice) => {
+    choice.disabled = true
+  })
 }
 
-function selectPlayerPokemon(event) {
-  if (!gameStarted || gameOver) {
+function startBattle(playerName) {
+  if (battleInProgress || matchOver || completedPlayers.has(playerName)) {
     return
   }
 
-  let opponentTeam = Array.from(trainerPokemons).slice(1)
-  let opponent = opponentTeam[Math.floor(Math.random() * opponentTeam.length)]
-
-  gardevoir.src = event.currentTarget.querySelector(".playerPokemon").src
-  primarina.src = opponent.src
-  lopunny.src = fightImage
-  roundReady = true
-}
-
-function finishGame(winner) {
-  gameOver = true
+  currentPlayer = playerName
+  playerBattleScore = 0
+  opponentBattleScore = 0
+  battleInProgress = true
   roundReady = false
-  resetStarterPokeballs()
-  resetButton.hidden = false
-  updateBattleText(`${winner} wins the game! Click a Pokeball to start a new game.`)
+  resetButton.hidden = true
+
+  playerBattlePokemon.src = clearBackground
+  playerBattlePokemon.alt = ""
+  battleResult.src = fightImage
+  battleResult.alt = "Fight"
+  opponentBattlePokemon.src = clearBackground
+  opponentBattlePokemon.alt = ""
+  battleControl.disabled = true
+  resetPokemonCycle()
+
+  let selectedPlayerChoice = Array.from(playerChoices).find((choice) => choice.dataset.player === playerName)
+  let selectedPlayerImage = selectedPlayerChoice.querySelector("img")
+  selectedPlayerImage.alt = `${selectedPlayerChoice.querySelector("span").textContent}, current player`
+  loadPokemon(playerName, selectedPlayerImage, "front_shiny")
+
+  let opponentIds = Array.from({ length: 7 }, () => Math.ceil(Math.random() * 1010))
+  loadPokemon(opponentIds[0], opponentPortrait)
+  opponentTeamPokemon.forEach((pokemon, index) => loadPokemon(opponentIds[index + 1], pokemon))
+  playerTeamPokemon.forEach((pokemon, index) => loadPokemon(teamPokemonIds[index], pokemon))
+
+  updatePlayerChoiceState()
+  setMatchStatus("Battle in progress.")
+  setRoundStatus(`${playerName} is ready. Choose a Pokemon from the team.`)
 }
 
-function resetGame() {
-  if (selectedStarter) {
-    startGame(selectedStarter)
+function selectTeamPokemon(event) {
+  if (!battleInProgress || matchOver) {
+    return
   }
+
+  let teamChoice = event.currentTarget
+  if (usedTeamPokemon.has(teamChoice)) {
+    return
+  }
+
+  let availableOpponents = opponentTeamPokemon.filter((pokemon) => !usedOpponentPokemon.has(pokemon))
+  let opponent = availableOpponents[Math.floor(Math.random() * availableOpponents.length)]
+
+  usedTeamPokemon.add(teamChoice)
+  usedOpponentPokemon.add(opponent)
+  teamChoice.dataset.teamState = "used"
+  teamChoice.disabled = true
+  opponent.dataset.teamState = "used"
+
+  playerBattlePokemon.src = teamChoice.querySelector(".playerPokemon").src
+  playerBattlePokemon.alt = "Player's selected Pokemon"
+  opponentBattlePokemon.src = opponent.src
+  opponentBattlePokemon.alt = "Opponent's selected Pokemon"
+  battleResult.src = fightImage
+  battleResult.alt = "Fight"
+  roundReady = true
+  battleControl.disabled = false
+  setRoundStatus("Hover over or select Fight to resolve this round.")
+}
+
+function finishMatch(winner) {
+  matchOver = true
+  battleInProgress = false
+  roundReady = false
+  currentPlayer = ""
+  resetButton.hidden = false
+  battleControl.disabled = true
+  lockTeamChoices()
+  updatePlayerChoiceState()
+
+  if (winner === "Player") {
+    setMatchStatus("Congratulations, you won the match! Want to play again?")
+  } else {
+    setMatchStatus("You lost the match. Try again?")
+  }
+  roundStatus.textContent = "The match is over."
+}
+
+function finishBattle(winner) {
+  let finishedPlayer = currentPlayer
+  completedPlayers.add(finishedPlayer)
+  battleInProgress = false
+  roundReady = false
+  battleControl.disabled = true
+  lockTeamChoices()
+
+  if (winner === "Player") {
+    playerMatchScore++
+  } else {
+    opponentMatchScore++
+  }
+
+  if (playerMatchScore === 2 || opponentMatchScore === 2) {
+    finishMatch(playerMatchScore === 2 ? "Player" : "Opponent")
+    return
+  }
+
+  currentPlayer = ""
+  updatePlayerChoiceState()
+  setMatchStatus(`${finishedPlayer}'s battle is over. Choose another player.`)
+  roundStatus.textContent = "Battle complete."
+}
+
+function resetMatch() {
+  playerBattleScore = 0
+  opponentBattleScore = 0
+  playerMatchScore = 0
+  opponentMatchScore = 0
+  currentPlayer = ""
+  completedPlayers.clear()
+  battleInProgress = false
+  matchOver = false
+  roundReady = false
+  resetButton.hidden = true
+
+  playerChoices.forEach((choice) => {
+    choice.querySelector("img").src = pokeballImage
+    choice.querySelector("img").alt = ""
+  })
+  playerBattlePokemon.src = clearBackground
+  playerBattlePokemon.alt = ""
+  battleResult.src = fightImage
+  battleResult.alt = "Fight"
+  opponentBattlePokemon.src = clearBackground
+  opponentBattlePokemon.alt = ""
+  opponentPortrait.src = clearBackground
+  battleControl.disabled = true
+  resetPokemonCycle(false)
+
+  updatePlayerChoiceState()
+  setMatchStatus("Choose a player to begin the first battle.")
+  roundStatus.textContent = "Choose a player, then choose a team Pokemon."
 }
 
 function resolveBattle() {
-  // Mouseover can fire repeatedly; a new player choice must be required for each score change.
-  if (!roundReady || gameOver) {
+  // Mouseover can fire repeatedly; a new team choice is required for each score change.
+  if (!roundReady || !battleInProgress || matchOver) {
     return
   }
 
   roundReady = false
+  battleControl.disabled = true
   let playerWon = Math.random() >= 0.5
 
   if (playerWon) {
-    playerScore++
-    lopunny.src = rightImage
-    gardevoir.src = defeatImage
+    playerBattleScore++
+    battleResult.src = rightImage
+    battleResult.alt = ""
+    opponentBattlePokemon.src = defeatImage
+    opponentBattlePokemon.alt = ""
   } else {
-    enemyScore++
-    lopunny.src = leftImage
-    primarina.src = defeatImage
+    opponentBattleScore++
+    battleResult.src = leftImage
+    battleResult.alt = ""
+    playerBattlePokemon.src = defeatImage
+    playerBattlePokemon.alt = ""
   }
 
-  if (playerScore === 6) {
-    finishGame("Player")
-  } else if (enemyScore === 6) {
-    finishGame("Enemy")
+  if (playerBattleScore === 6) {
+    finishBattle("Player")
+  } else if (opponentBattleScore === 6) {
+    finishBattle("Opponent")
+  } else if (usedTeamPokemon.size === teamPokemonChoices.length) {
+    resetPokemonCycle()
+    setRoundStatus("All six Pokemon have battled. The teams are ready for another cycle.")
   } else {
-    updateBattleText()
+    setRoundStatus(`${playerWon ? "Player" : "Opponent"} won this round.`)
   }
 }
 
 window.onload = () => {
-  starterPokeballs.forEach((pokeball, index) => {
-    pokeball.addEventListener("click", () => startGame(pokeArr[index]))
+  playerChoices.forEach((choice) => {
+    choice.addEventListener("click", () => startBattle(choice.dataset.player))
   })
-  playerChoices.forEach((pokemon) => pokemon.addEventListener("click", selectPlayerPokemon))
-  lopunny.addEventListener("mouseover", resolveBattle)
-  resetButton.addEventListener("click", resetGame)
+  teamPokemonChoices.forEach((pokemon) => pokemon.addEventListener("click", selectTeamPokemon))
+  battleControl.addEventListener("mouseover", resolveBattle)
+  battleControl.addEventListener("click", resolveBattle)
+  resetButton.addEventListener("click", resetMatch)
+  resetMatch()
 }
